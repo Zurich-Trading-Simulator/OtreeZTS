@@ -1,0 +1,2 @@
+# OtreeZts
+Zurich Trading Simulator
