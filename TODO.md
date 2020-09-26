@@ -1,0 +1,20 @@
+# TODO:
+- [X] Create basic Front End structure
+- [X] Store Javascripts seperately as static files
+- [X] Take setup values from backend when starting trading
+- [X] Set up Server communication during trading
+- [X] Store all Trading Reports in DB
+- [X] Create a downloadable Report 
+- [X] Calculate ROI percent
+- [X] Overview after each round
+- [X] Process timeseries files and send data to client
+- [X] Take in qualtrics links
+- [X] Set Payoff after each round
+- [X] When buying shares and not enough money buy as much as possible
+- [X] Make sure all important values are on Trading Report
+- [ ] Put general utility functions into a util.py
+- [ ] Find better solution on timeseries file selection in each round
+- [ ] If possible make a random_payoff from some random round
+- [ ] Allow uploading of timeseries files
+- [ ] Finer grained Settings menu
+- [ ] Add Game Instructions

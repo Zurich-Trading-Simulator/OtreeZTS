@@ -1,0 +1,19 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    Intro Page
+{% endblock %}
+
+{% block content %}
+
+    <p>
+        This is the start page of round {{subsession.round_number}}/{{Constants.num_rounds}} of the experiment
+    </p>
+    <p>
+        TODO: add instructions here
+    </p>
+
+    {% next_button %}
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    Results of Round {{subsession.round_number}}/{{Constants.num_rounds}}
+{% endblock %}
+
+{% block content %}
+
+<!-- Portfolio table -->
+<div class="container">
+    <h2>My Portfolio</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Cash</th>
+            <th>Shares</th>
+            <th>Share Value</th>
+            <th>Total</th>
+            <th>P&L</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{player.get_cash}}</td>
+            <td>{{player.get_shares}}</td>
+            <td>{{player.get_share_value}}</td>
+            <td>{{player.get_portfolio_value}}</td>
+            <td>{{player.get_pandl}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+    {% next_button %}
+{% endblock %}
+
+

@@ -1,0 +1,123 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+<!-- Write content in here -->
+
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- left side -->
+        <div class="col-lg-8">
+
+            <!-- Market chart -->
+            <div class="container">
+            <h2>Market</h2>
+            <figure class="highcharts-figure">
+            <div id="container"></div>
+            </figure>
+            </div>
+
+            <!-- Portfolio table -->
+            <div class="container">
+            <h2>My Portfolio</h2>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Cash</th>
+                    <th>Shares</th>
+                    <th>Share Value</th>
+                    <th>Total</th>
+                    <th>P&L</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="table_cash"></td>
+                    <td id="table_shares"></td>
+                    <td id="table_share_value"></td>
+                    <td id="table_total"></td>
+                    <td id="table_pandl"></td>
+                </tr>
+            </tbody>
+            </table>
+            </div>
+        </div>
+
+        <!-- right side -->
+        <div style="background-color:rgb(240,240,240)" class="col-lg-4">
+
+            <!-- Trade buttons -->
+            <div class="container-fluid">
+                <h2>Trade</h2>
+                <div class="row">
+                    <div class="col-sm">
+                    <button onclick="buy_shares(this.value)" value="1" id="trade_btn_buy_s" type="button" class="btn btn-primary btn-block">Buy 1</button>
+                    </div>
+                    <div class="col-sm">
+                    <button onclick="buy_shares(this.value)" value="10" id="trade_btn_buy_m" type="button" class="btn btn-primary btn-block">Buy 10</button>
+                    </div>
+                    <div class="col-sm">
+                    <button onclick="buy_shares(this.value)" value="50" id="trade_btn_buy_l" type="button" class="btn btn-primary btn-block">Buy 50</button>
+                    </div>
+                </div>
+
+                <div class="container-fluid">
+                <h4 class="text-center">Price:</h4>
+                <h1 class="text-center" id="trade_price"></h1>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm">
+                    <button onclick="sell_shares(this.value)" value="1" id="trade_btn_sell_s" type="button" class="btn btn-danger btn-block">SELL 1</button>
+                    </div>
+                    <div class="col-sm">
+                    <button onclick="sell_shares(this.value)" value="1" id="trade_btn_sell_m" type="button" class="btn btn-danger btn-block">SELL 10</button>
+                    </div>
+                    <div class="col-sm">
+                    <button onclick="sell_shares(this.value)" value="1" id="trade_btn_sell_l" type="button" class="btn btn-danger btn-block">SELL 50</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-fluid mt-4">
+                <!--<div  class="jumbotron" style=background-color:lightgrey>-->
+                <h2>News</h2>
+                <p id="trade_news">Bootstrap is the most popular HTML, CSS, and JS framework for developing responsive, mobile-first projects on the web.</p>
+                <!--</div> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+{% next_button %}
+
+{% endblock %}
+
+<!-- Write scripts in here -->
+{% block scripts %}
+
+<!-- Load javascripts from Content Delivery Network -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+
+<!-- Load custom javascripts from static files -->
+<script src="{% static "ZTS/chart.js" %}"></script>
+<script src="{% static "ZTS/trade_controller.js" %}"></script>
+{% endblock %}
+
+{% block styles %}
+{% endblock %}

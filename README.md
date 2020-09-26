@@ -13,25 +13,6 @@ It is developed in oTree an open-source platform for behavioral research.
     `/_static/ZTS/timeseries_files/timeseries_[round-nr].csv` make sure that if replacing them, they are in the same format.
 - Reports: Download the custom Report for a more detailed trading actions summary.
 
-## TODO:
-- [X] Create basic Front End structure
-- [X] Store Javascripts seperately as static files
-- [X] Take setup values from backend when starting trading
-- [X] Set up Server communication during trading
-- [X] Store all Trading Reports in DB
-- [X] Create a downloadable Report 
-- [X] Calculate ROI percent
-- [X] Overview after each round
-- [X] Process timeseries files and send data to client
-- [X] Take in qualtrics links
-- [X] Set Payoff after each round
-- [X] When buying shares and not enough money buy as much as possible
-- [X] Make sure all important values are on Trading Report
-- [ ] Find better solution on timeseries file selection in each round
-- [ ] If possible make a random_payoff from some random round
-- [ ] Allow uploading of timeseries files
-- [ ] Finer grained Settings menu
-
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
