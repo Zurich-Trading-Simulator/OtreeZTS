@@ -26,14 +26,6 @@ See deployment for notes on how to deploy the project on a live system.
 5. install dependencies: `pip install -r requirements_base.txt`
 6. run the developement server: `otree devserver`
 
-## Testing
-
-TODO
-
-## Deployment
-
-TODO
-
 ## Built With
 
 * [oTree](http://www.otree.org) - A web framework for behavioural multiplayer experiments.
