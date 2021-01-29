@@ -51,7 +51,7 @@ DEMO_PAGE_INTRO_HTML = """
 in the form of a trading game, designed by the Chair of Cognitive Science - ETH Zurich.</p>
 """
 
-# don't share this with anybody.
-SECRET_KEY = '2sjpogef4a8#)%ca9_eu89ba*l_d356mh&*qaiqc6oy*u*dud^'
+# Change this default secret key to a fully random one after forking.
+SECRET_KEY = '2sjpogef4a8#)%ca9_eu8%ba*l_d245lp&*hatrb6oy*u*dud^'
 
 INSTALLED_APPS = ['otree']
