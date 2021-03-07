@@ -4,7 +4,11 @@ from .models import Constants
 import pandas as pd
 import locale
 
-class IntroPage(Page):
+class InstructionPage(Page):
+    def is_displayed(self):
+        return self.round_number == 1
+
+class StartPage(Page):
     pass
 
 class TradingPage(Page):
@@ -29,4 +33,4 @@ class TradingPage(Page):
 class ResultsPage(Page):
     pass
 
-page_sequence = [IntroPage, TradingPage, ResultsPage]
+page_sequence = [InstructionPage, StartPage, TradingPage, ResultsPage]
