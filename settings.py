@@ -10,11 +10,11 @@ SESSION_CONFIG_DEFAULTS = dict(
     survey_link="https://www.qualtrics.com",
     refresh_rate=500,
     initial_cash=1000000,
+    random_round_payoff=True,
     real_world_currency_per_point=1.00,
     participation_fee=0.00,
     doc="",
 )
-
 
 SESSION_CONFIGS = [
     dict(
@@ -46,12 +46,40 @@ ADMIN_USERNAME = 'admin'
 ADMIN_PASSWORD = environ.get('OTREE_ADMIN_PASSWORD')
 
 DEMO_PAGE_INTRO_HTML = """
-<b>Zurich Trading Simulation (ZTS)</b>
+<b>Zurich Trading Simulator (ZTS)</b>
 <p>A web-based behaviour experiment 
 in the form of a trading game, designed by the Chair of Cognitive Science - ETH Zurich.</p>
 """
 
 # Change this default secret key to a fully random one after forking.
-SECRET_KEY = '2sjpogef4a8#)%ca9_eu8%ba*l_d245lp&*hatrb6oy*u*dud^'
+SECRET_KEY = '2sjpogef4a8#)%cb9_eu8%ba*l_d245lp&*hatrb6oy*u*dud^'
 
 INSTALLED_APPS = ['otree']
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    "formatters": {
+        "simple": {
+          "format": "%(asctime)s - %(message)s",
+        },
+        "detailed": {
+          "format": "%(asctime)s - %(pathname)s:%(lineno)d - %(message)s"
+        }
+    },
+    'handlers': {
+        'file': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': './logs/django_debug.log',
+            'formatter': 'detailed',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'WARNING',
+            'propagate': True,
+        },
+    },
+}

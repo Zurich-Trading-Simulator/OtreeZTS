@@ -14,7 +14,7 @@
 - [X] Make sure all important values are on Trading Report
 - [ ] Put general utility functions into a util.py
 - [ ] Find better solution on timeseries file selection in each round
-- [ ] If possible make a random_payoff from some random round
+- [X] If possible make a random_payoff from some random round
 - [ ] Allow uploading of timeseries files
 - [ ] Finer grained Settings menu
 - [ ] Add Game Instructions

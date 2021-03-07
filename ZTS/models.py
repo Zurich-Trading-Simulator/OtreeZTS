@@ -1,6 +1,7 @@
+import random
+import datetime
 from otree.db.models import Model, ForeignKey
 from django.db import models as models_django
-import datetime
 from otree.api import (
     models,
     widgets,
@@ -15,7 +16,7 @@ from otree.api import (
 author = ''
 
 doc = """
-Zurich Trading Simulation (ZTS)
+Zurich Trading Simulator (ZTS)
 A web-based behaviour experiment in the form of a trading game, 
 designed by the Chair of Cognitive Science - ETH Zurich.
 """
@@ -28,8 +29,17 @@ class Constants(BaseConstants):
 
 
 class Subsession(BaseSubsession):
-    pass
 
+    def creating_session(subsession):
+        """
+        This function gets called before each creation of a ZTS 
+        subsession. We use it to set a random payoff round for 
+        each player.
+        """
+        if subsession.round_number == 1:
+            for player in subsession.get_players():
+                participant = player.participant
+                participant.vars['round_to_pay'] = random.randint(1, Constants.num_rounds)
 
 class Group(BaseGroup):
 
@@ -39,7 +49,6 @@ class Group(BaseGroup):
         further processes them.
         :param id_in_group: id of player in group
         :param payload: trading report
-        :return:
         """
 
         #print('received a report from', id_in_group, ':', payload)
@@ -65,7 +74,7 @@ class Group(BaseGroup):
 
         # Set payoff if end of round
         if(payload['action'] == 'End'):
-            p.payoff = payload['pandl']
+            p.set_payoff()
 
 class Player(BasePlayer):
     cash = models.FloatField(initial=1000000)
@@ -86,6 +95,18 @@ class Player(BasePlayer):
         return '{:,}'.format(int(self.portfolio_value))
     def get_pandl(self):
         return '{:,}'.format(int(self.pandl))
+
+    def set_payoff(self):
+        """
+        Set the players payoff for the current round to the total portfolio value.
+        If we want participants final payoff to be chosen randomly
+        from all rounds instead of accumulated (oTree standard) subtract current payoff
+        from participants.payoff if we are not in round_to_pay
+        """
+        self.payoff = self.portfolio_value
+        random_payoff = self.session.config['random_round_payoff']
+        if(random_payoff and self.round_number != self.participant.vars['round_to_pay']):
+            self.participant.payoff -= self.payoff
 
 class TradingAction(Model):
     ACTIONS = [
@@ -122,6 +143,7 @@ def custom_export(players):
     # header row
     yield ['participant', 'action', 'quantity', 'price_per_share', 'cash', 'owned_shares', 'share_value', 'portfolio_value', 'cur_day',
            'asset', 'roi']
+    # data content
     for p in players:
         for ta in p.tradingaction_set.all():
             yield [p.participant.id_in_session, ta.action, ta.quantity, ta.price_per_share, ta.cash, ta.owned_shares, ta.share_value,
