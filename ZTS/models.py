@@ -16,7 +16,7 @@ from otree.api import (
 author = ''
 
 doc = """
-Zurich Trading Simulator (ZTS)
+Trading App of the Zurich Trading Simulator (ZTS).
 A web-based behaviour experiment in the form of a trading game, 
 designed by the Chair of Cognitive Science - ETH Zurich.
 """
@@ -142,9 +142,9 @@ def custom_export(players):
     """
     # header row
     yield ['participant', 'action', 'quantity', 'price_per_share', 'cash', 'owned_shares', 'share_value', 'portfolio_value', 'cur_day',
-           'asset', 'roi']
+           'asset', 'roi', 'session']
     # data content
     for p in players:
         for ta in p.tradingaction_set.all():
-            yield [p.participant.id_in_session, ta.action, ta.quantity, ta.price_per_share, ta.cash, ta.owned_shares, ta.share_value,
-                   ta.portfolio_value, ta.cur_day, ta.asset, ta.roi]
+            yield [p.participant.code, ta.action, ta.quantity, ta.price_per_share, ta.cash, ta.owned_shares, ta.share_value,
+                   ta.portfolio_value, ta.cur_day, ta.asset, ta.roi, p.session.code]

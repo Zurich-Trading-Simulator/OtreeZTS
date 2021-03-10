@@ -8,7 +8,8 @@ from os import environ
 SESSION_CONFIG_DEFAULTS = dict(
     session_name="test_session",
     survey_link="https://www.qualtrics.com",
-    refresh_rate=500,
+    timeseries_file="demo",
+    refresh_rate=50,
     initial_cash=1000000,
     random_round_payoff=True,
     real_world_currency_per_point=1.00,

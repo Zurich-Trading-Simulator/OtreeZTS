@@ -18,7 +18,8 @@ class TradingPage(Page):
         """
         Pass data for trading controller to javascript front-end
         """
-        timeseries_df = pd.read_csv('_static/ZTS/timeseries_files/timeseries_{}.csv'.format(self.round_number))
+        timeseries_df = pd.read_csv('_static/ZTS/timeseries_files/{}_{}.csv'.format(
+            self.session.config['timeseries_file'], self.round_number))
         timeseries_points = timeseries_df['AdjustedClose'].to_list()
         timeseries_length = len(timeseries_points)
         timeseries_news = timeseries_df['News'].fillna("").to_list()
