@@ -1,5 +1,5 @@
 # ZTS Trading Simulator
-This is the repository for the Zurich Trading Simulator (ZTS) a web-based behaviour experiment 
+This is the repository for the Zurich Trading Simulator (ZTS) a web-based behavior experiment 
 in the form of a trading game, designed by the Chair of Cognitive Science - ETH Zurich. 
 It is developed using oTree an open-source platform for behavioral research.
 
