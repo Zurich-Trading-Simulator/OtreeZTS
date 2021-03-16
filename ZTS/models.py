@@ -13,7 +13,7 @@ from otree.api import (
     currency_range,
 )
 
-author = ''
+author = 'Jason Friedman, Student Helper COG, ETHZ'
 
 doc = """
 Trading App of the Zurich Trading Simulator (ZTS).
@@ -23,9 +23,9 @@ designed by the Chair of Cognitive Science - ETH Zurich.
 
 
 class Constants(BaseConstants):
-    name_in_url = 'ZTS'
+    name_in_url = 'zts'
     players_per_group = None
-    num_rounds = 3
+    num_rounds = 99
 
 
 class Subsession(BaseSubsession):
@@ -39,7 +39,7 @@ class Subsession(BaseSubsession):
         if subsession.round_number == 1:
             for player in subsession.get_players():
                 participant = player.participant
-                participant.vars['round_to_pay'] = random.randint(1, Constants.num_rounds)
+                participant.vars['round_to_pay'] = random.randint(1, subsession.session.config['num_rounds'])
 
 class Group(BaseGroup):
 

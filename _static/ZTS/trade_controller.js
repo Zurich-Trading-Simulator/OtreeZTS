@@ -14,7 +14,7 @@ var length = js_vars.length;                        // length of data
 var news = js_vars.news;                            // list of news that should be displayed
 var start_cash = parseFloat(js_vars.cash);          // amount of initial cash
 var cash = start_cash;                              // amount of cash
-var shares = 0.0;                                   // amount of initial shares a player holds
+var shares = 0                                      // amount of initial shares a player holds
 var total = cash;                                   // current cash + value of share in possession
 var roi_percent = 0.0;                              // Return of Investment in percents
 var pandl = 0.0;                                    // Profit & Loss
@@ -92,8 +92,8 @@ Trading Logic:
 function buy_half_shares() {
     // Makes a fair split of cash and shares with start money for initialization
     var half_cash = cash / 2.0;
-    var half_shares = half_cash / data[0];
-    cash = half_cash;
+    var half_shares = Math.floor(half_cash / data[0]);
+    cash -= half_shares * data[0];
     shares = half_shares;
     update_portfolio();
 }
@@ -104,13 +104,13 @@ function set_buy_sell_amounts() {
     // for most situations. Also we tried to make somewhat nice values (/10*10)
     var min = Math.min.apply(Math, data);
     var max_shares = (Math.ceil((cash/min) / 10) * 10);
-    var button_m = Math.max(10, Math.ceil(((max_shares/10) -10) / 10) * 10);  // roughly 10 percent of current shares
+    var button_m = Math.max(10, Math.ceil((max_shares/10) / 10) * 10);  // roughly 10 percent of current shares
     $_('trade_btn_sell_m').innerHTML = "Sell " + button_m;
     $_('trade_btn_sell_m').value = button_m;
     $_('trade_btn_buy_m').innerHTML = "Buy " + button_m;
     $_('trade_btn_buy_m').value = button_m;
 
-    var button_l = Math.max(20, Math.ceil((max_shares/6) / 10) * 10)  // roughly 20 percent of current shares
+    var button_l = Math.max(20, Math.ceil((max_shares/5) / 10) * 10)  // roughly 20 percent of current shares
     $_('trade_btn_sell_l').innerHTML = "Sell " + button_l;
     $_('trade_btn_sell_l').value = button_l;
     $_('trade_btn_buy_l').innerHTML = "Buy " + button_l;
@@ -135,18 +135,18 @@ function buy_shares(amount) {
             liveSend(get_trade_report('Buy', cur_price, amount));
             toastr.success('Success!');
         }
-        else if(cash > 0) {
-            // We don't have enough cash, but buy as much as possible
-            var available_amount = cash / cur_price;
-            cash = 0;
-            shares += available_amount;
-            $_('table_cash').innerHTML = to_comma_seperated(cash);
-            $_('table_shares').innerHTML = to_comma_seperated(shares);
+        // else if(cash > 0) {
+        //     // We don't have enough cash, but buy as much as possible
+        //     var available_amount = cash / cur_price;
+        //     cash = 0;
+        //     shares += available_amount;
+        //     $_('table_cash').innerHTML = to_comma_seperated(cash);
+        //     $_('table_shares').innerHTML = to_comma_seperated(shares);
 
-            // send report to server
-            liveSend(get_trade_report('Buy', cur_price, available_amount));
-            toastr.success('Bought '+available_amount+' shares!');
-        }
+        //     // send report to server
+        //     liveSend(get_trade_report('Buy', cur_price, available_amount));
+        //     toastr.success('Bought '+available_amount+' shares!');
+        // }
         else {
             // We have no cash
             toastr.error('No money!');
@@ -173,18 +173,18 @@ function sell_shares(amount) {
             liveSend(get_trade_report('Sell', cur_price, -amount));
             toastr.success('Success!');
         }
-        else if(cur_shares > 0) {
-            // we don't have enough, but sell rest
-            var available_amount = cur_shares;
-            shares = 0;
-            cash += available_amount * cur_price;
-            $_('table_cash').innerHTML = to_comma_seperated(cash);
-            $_('table_shares').innerHTML = to_comma_seperated(shares);
+        // else if(cur_shares > 0) {
+        //     // we don't have enough, but sell rest
+        //     var available_amount = cur_shares;
+        //     shares = 0;
+        //     cash += available_amount * cur_price;
+        //     $_('table_cash').innerHTML = to_comma_seperated(cash);
+        //     $_('table_shares').innerHTML = to_comma_seperated(shares);
 
-            // send report to server
-            liveSend(get_trade_report('Sell', cur_price, -available_amount));
-            toastr.success('Sold remaining '+available_amount+' shares!');
-        }
+        //     // send report to server
+        //     liveSend(get_trade_report('Sell', cur_price, -available_amount));
+        //     toastr.success('Sold remaining '+available_amount+' shares!');
+        // }
         else {
             // we have no shares left
             toastr.error('No Shares!');

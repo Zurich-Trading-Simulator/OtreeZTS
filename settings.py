@@ -9,6 +9,7 @@ SESSION_CONFIG_DEFAULTS = dict(
     session_name="test_session",
     survey_link="https://www.qualtrics.com",
     timeseries_file="demo",
+    num_rounds=3,
     refresh_rate=50,
     initial_cash=1000000,
     random_round_payoff=True,

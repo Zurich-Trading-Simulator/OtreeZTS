@@ -11,7 +11,10 @@ class Survey(Page):
         consists of adding arguments important for the survey to the link.
         """
         l = self.session.config['survey_link']
-        l = l + '?uid=' + str(self.participant.id_in_session)
+
+        # Add some params to the link if desired (e.g. user id)
+        #l = l + '?uid=' + str(self.participant.id_in_session)
+        
         return dict(processed_survey_link=l,)
 
 page_sequence = [Survey]

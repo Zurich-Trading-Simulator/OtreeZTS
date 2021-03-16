@@ -9,10 +9,14 @@ class InstructionPage(Page):
         return self.round_number == 1
 
 class StartPage(Page):
-    pass
+    def is_displayed(self):
+        return self.round_number <= self.session.config['num_rounds']
 
 class TradingPage(Page):
     live_method = 'live_trading_report'
+
+    def is_displayed(self):
+        return self.round_number <= self.session.config['num_rounds']
 
     def js_vars(self):
         """
@@ -32,6 +36,7 @@ class TradingPage(Page):
         )
 
 class ResultsPage(Page):
-    pass
+    def is_displayed(self):
+        return self.round_number <= self.session.config['num_rounds']
 
 page_sequence = [InstructionPage, StartPage, TradingPage, ResultsPage]

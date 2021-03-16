@@ -8,7 +8,7 @@
 {% block content %}
 
     <p>
-        Click on "Next" to continue with round {{subsession.round_number}}/{{Constants.num_rounds}} of the experiment, whenever you are ready!
+        Click on "Next" to continue with round {{subsession.round_number}}/{{session.config.num_rounds}} of the experiment, whenever you are ready!
     </p>
 
     {% next_button %}
