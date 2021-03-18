@@ -30,16 +30,16 @@ class Constants(BaseConstants):
 
 class Subsession(BaseSubsession):
 
-    def creating_session(subsession):
+    def creating_session(self):
         """
         This function gets called before each creation of a ZTS 
         subsession. We use it to set a random payoff round for 
         each player.
         """
-        if subsession.round_number == 1:
-            for player in subsession.get_players():
+        if self.round_number == 1:
+            for player in self.get_players():
                 participant = player.participant
-                participant.vars['round_to_pay'] = random.randint(1, subsession.session.config['num_rounds'])
+                participant.vars['round_to_pay'] = random.randint(1, self.session.config['num_rounds'])
 
 class Group(BaseGroup):
 

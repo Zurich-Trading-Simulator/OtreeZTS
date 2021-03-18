@@ -1,9 +1,9 @@
 # ZTS Trading Simulator
-This is the repository for the Zurich Trading Simulator (ZTS) a web-based behaviour experiment 
+This is the repository for the Zurich Trading Simulator (ZTS) a web-based behavior experiment 
 in the form of a trading game, designed by the Chair of Cognitive Science - ETH Zurich. 
 It is developed using oTree an open-source platform for behavioral research.
 
-For a more detailed documentation read more [here](./documentation.pdf).
+For a more detailed documentation read [here](./documentation.pdf).
 
 ## Project Structure
 - The entire Project is developed in Otree built upon Django. Any requirements that are not supported in Otree are built directly in Django.
