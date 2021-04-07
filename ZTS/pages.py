@@ -26,7 +26,10 @@ class TradingPage(Page):
             self.session.config['timeseries_file'], self.round_number))
         timeseries_points = timeseries_df['AdjustedClose'].to_list()
         timeseries_length = len(timeseries_points)
-        timeseries_news = timeseries_df['News'].fillna("").to_list()
+
+        timeseries_news = []
+        if 'News' in timeseries_df:
+            timeseries_news = timeseries_df['News'].fillna("").to_list()
         return dict(
             refresh_rate=self.session.config['refresh_rate'],
             data=timeseries_df['AdjustedClose'].to_list(),
