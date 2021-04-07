@@ -27,7 +27,7 @@ class TradingPage(Page):
         timeseries_points = timeseries_df['AdjustedClose'].to_list()
         timeseries_length = len(timeseries_points)
 
-        timeseries_news = []
+        timeseries_news = [""] * timeseries_length
         if 'News' in timeseries_df:
             timeseries_news = timeseries_df['News'].fillna("").to_list()
         return dict(

@@ -15,6 +15,7 @@ var news = js_vars.news;                            // list of news that should 
 var start_cash = parseFloat(js_vars.cash);          // amount of initial cash
 var cash = start_cash;                              // amount of cash
 var shares = 0                                      // amount of initial shares a player holds
+var share_value = 0;                                // value of shares at current day
 var total = cash;                                   // current cash + value of share in possession
 var roi_percent = 0.0;                              // Return of Investment in percents
 var pandl = 0.0;                                    // Profit & Loss
@@ -92,10 +93,12 @@ Trading Logic:
 function buy_half_shares() {
     // Makes a fair split of cash and shares with start money for initialization
     var half_cash = cash / 2.0;
-    var half_shares = Math.floor(half_cash / data[0]);
+    var half_shares = Math.round(half_cash / data[0]);
     cash -= half_shares * data[0];
     shares = half_shares;
+    liveSend(get_trade_report('Buy', data[0], half_shares));
     update_portfolio();
+
 }
 
 function set_buy_sell_amounts() {
