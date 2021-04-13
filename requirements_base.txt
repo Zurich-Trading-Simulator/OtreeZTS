@@ -1,2 +1,2 @@
-otree>=3.0.1
+otree==3.3.11
 pandas>=1.1.1
