@@ -39,8 +39,11 @@ class Subsession(BaseSubsession):
         if self.round_number == 1:
             for player in self.get_players():
                 participant = player.participant
-                participant.vars['round_to_pay'] = random.randint(1, self.session.config['num_rounds'])
-
+                first_round = 1
+                if(self.session.config['training_round']):
+                    first_round = 2
+                participant.vars['round_to_pay'] = random.randint(first_round, self.session.config['num_rounds'])
+                
 class Group(BaseGroup):
 
     def live_trading_report(self, id_in_group, payload):
@@ -101,11 +104,15 @@ class Player(BasePlayer):
         Set the players payoff for the current round to the total portfolio value.
         If we want participants final payoff to be chosen randomly
         from all rounds instead of accumulated (oTree standard) subtract current payoff
-        from participants.payoff if we are not in round_to_pay
+        from participants.payoff if we are not in round_to_pay. Also payoff should not 
+        count if we are in a training round.
         """
         self.payoff = self.portfolio_value
         random_payoff = self.session.config['random_round_payoff']
+        training_round = self.session.config['training_round']
         if(random_payoff and self.round_number != self.participant.vars['round_to_pay']):
+            self.participant.payoff -= self.payoff
+        elif(training_round and self.round_number == 1):
             self.participant.payoff -= self.payoff
 
 class TradingAction(Model):
@@ -148,3 +155,4 @@ def custom_export(players):
         for ta in p.tradingaction_set.all():
             yield [p.participant.code, ta.action, ta.quantity, ta.price_per_share, ta.cash, ta.owned_shares, ta.share_value,
                    ta.portfolio_value, ta.cur_day, ta.asset, ta.roi, p.session.code]
+

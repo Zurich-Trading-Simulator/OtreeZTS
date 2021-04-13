@@ -11,6 +11,12 @@ class InstructionPage(Page):
 class StartPage(Page):
     def is_displayed(self):
         return self.round_number <= self.session.config['num_rounds']
+    
+    def vars_for_template(self):
+        is_training_round = self.session.config['training_round'] and self.round_number == 1
+        return dict(
+            is_training_round=is_training_round,
+        )
 
 class TradingPage(Page):
     live_method = 'live_trading_report'
