@@ -55,7 +55,7 @@ in the form of a trading game, designed by the Chair of Cognitive Science - ETH 
 """
 
 # Change this default secret key to a fully random one after forking.
-SECRET_KEY = '2sjpogef4a8#)%cb9_us9%ba*l_d452lp&*hatrb6oy*u*dud^'
+SECRET_KEY = '1sjjosef4a7#)%cb3_us8%aa*l_d476lp&*hatrb6al*u*dude^'
 
 INSTALLED_APPS = ['otree']
 
