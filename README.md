@@ -12,7 +12,7 @@ For a more detailed documentation read [here](./documentation.pdf).
     - `/ZTS`: x rounds of the trading simulator, where the number of rounds x can be set in the `ZTS/models.py`.
     - `/Post_Survey`: A link to a post survey, specified through the session settings.  
 - Timeseries Files used for the trading charts are stored in the following way: 
-    `/_static/ZTS/timeseries_files/timeseries_[round-nr].csv` make sure that if replacing them, they are in the same format.
+    `/_static/ZTS/timeseries_files/[filename]_[round-nr].csv` make sure that if replacing them, they are in the same format.
 - Reports: Download the custom Report for a more detailed trading actions summary.
 
 ## Getting Started
