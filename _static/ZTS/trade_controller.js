@@ -21,7 +21,7 @@ var roi_percent = 0.0;                              // Return of Investment in p
 var pandl = 0.0;                                    // Profit & Loss
 
 // chart variables
-var y_axis_offset = Math.min(10, 0.25 * data[0]);   // current length of y axis from center
+var y_axis_offset = Math.min(1, 0.25 * data[0]);   // current length of y axis from center
 var trading_happened = false;
 var finished = false;
 
@@ -34,8 +34,7 @@ Function that simulates a day in the market:
 
 // setup and first iteration
 var chart = init_chart();
-update_y_axis(data[0]);
-chart.series[0].addPoint([cur_day, data[0]], true, false);
+chart.yAxis[0].setExtremes(data[0] - y_axis_offset, data[0] + y_axis_offset);
 buy_half_shares();
 set_buy_sell_amounts();
 liveSend(get_trade_report('Start', data[0], 0));
@@ -214,13 +213,11 @@ Chart Logic:
     - update y axis min and max in chart if necessary
 ------------------------------------------------------------------*/
 function update_y_axis(y) {
-    var new_y_offset = Math.abs(y - data[0]);
-    //alert("Update y_axis: " + new_y_offset + " " + y_axis_offset);
+    var new_y_offset = Math.abs(y - data[0]) * 1.05;
     if(new_y_offset > y_axis_offset) {
-        y_axis_offset = Math.abs(y - data[0]);
+        y_axis_offset = new_y_offset;
         var y_axis_min = data[0] - y_axis_offset;
         var y_axis_max = data[0] + y_axis_offset;
-        //alert("Update y_axis");
         chart.yAxis[0].setExtremes(y_axis_min, y_axis_max);
     }
 }
