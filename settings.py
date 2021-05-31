@@ -14,6 +14,7 @@ SESSION_CONFIG_DEFAULTS = dict(
     initial_cash=10000,
     random_round_payoff=True,
     training_round=True,
+    graph_buffer=0.05,
     real_world_currency_per_point=0.00001,
     participation_fee=0.00,
     doc="",

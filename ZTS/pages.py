@@ -38,6 +38,7 @@ class TradingPage(Page):
             timeseries_news = timeseries_df['News'].fillna("").to_list()
         return dict(
             refresh_rate=self.session.config['refresh_rate'],
+            graph_buffer=self.session.config['graph_buffer'],
             data=timeseries_df['AdjustedClose'].to_list(),
             length=timeseries_length,
             news=timeseries_news,

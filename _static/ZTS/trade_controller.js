@@ -6,6 +6,7 @@ $('.otree-btn-next').hide();
 
 // settings variables
 var refresh_rate = js_vars.refresh_rate;
+var graph_buffer = js_vars.graph_buffer;
 
 // portfolio variables
 var data = js_vars.data;                            // data from timeseries file
@@ -213,7 +214,7 @@ Chart Logic:
     - update y axis min and max in chart if necessary
 ------------------------------------------------------------------*/
 function update_y_axis(y) {
-    var new_y_offset = Math.abs(y - data[0]) * 1.05;
+    var new_y_offset = Math.abs(y - data[0]) * (1 + graph_buffer);
     if(new_y_offset > y_axis_offset) {
         y_axis_offset = new_y_offset;
         var y_axis_min = data[0] - y_axis_offset;

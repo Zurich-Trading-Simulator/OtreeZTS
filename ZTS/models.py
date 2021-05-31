@@ -61,6 +61,7 @@ class Group(BaseGroup):
         p.share_value = payload['share_value']
         p.portfolio_value = payload['portfolio_value']
         p.pandl = payload['pandl']
+        p.save()
 
         tradingaction = p.tradingaction_set.create()
         tradingaction.action = payload['action']
