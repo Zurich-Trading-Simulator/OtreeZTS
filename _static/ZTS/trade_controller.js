@@ -138,18 +138,17 @@ function buy_shares(amount) {
             liveSend(get_trade_report('Buy', cur_price, amount));
             toastr.success('Success!');
         }
-        // else if(cash > 0) {
-        //     // We don't have enough cash, but buy as much as possible
-        //     var available_amount = cash / cur_price;
-        //     cash = 0;
-        //     shares += available_amount;
-        //     $_('table_cash').innerHTML = to_comma_seperated(cash);
-        //     $_('table_shares').innerHTML = to_comma_seperated(shares);
-
-        //     // send report to server
-        //     liveSend(get_trade_report('Buy', cur_price, available_amount));
-        //     toastr.success('Bought '+available_amount+' shares!');
-        // }
+        else if(cash > 0) {
+            // We don't have enough cash, but buy as much as possible
+            var available_amount = Math.floor(cash / cur_price);
+            cash = 0;
+            shares += available_amount;
+            $_('table_cash').innerHTML = to_comma_seperated(cash);
+            $_('table_shares').innerHTML = to_comma_seperated(shares);
+            // send report to server
+            liveSend(get_trade_report('Buy', cur_price, available_amount));
+            toastr.success('Bought '+available_amount+' shares!');
+        }
         else {
             // We have no cash
             toastr.error('No money!');
@@ -176,18 +175,17 @@ function sell_shares(amount) {
             liveSend(get_trade_report('Sell', cur_price, -amount));
             toastr.success('Success!');
         }
-        // else if(cur_shares > 0) {
-        //     // we don't have enough, but sell rest
-        //     var available_amount = cur_shares;
-        //     shares = 0;
-        //     cash += available_amount * cur_price;
-        //     $_('table_cash').innerHTML = to_comma_seperated(cash);
-        //     $_('table_shares').innerHTML = to_comma_seperated(shares);
-
-        //     // send report to server
-        //     liveSend(get_trade_report('Sell', cur_price, -available_amount));
-        //     toastr.success('Sold remaining '+available_amount+' shares!');
-        // }
+         else if(cur_shares > 0) {
+            // we don't have enough, but sell rest
+            var available_amount = cur_shares;
+            shares = 0;
+            cash += available_amount * cur_price;
+            $_('table_cash').innerHTML = to_comma_seperated(cash);
+            $_('table_shares').innerHTML = to_comma_seperated(shares);
+            // send report to server
+            liveSend(get_trade_report('Sell', cur_price, -available_amount));
+            toastr.success('Sold remaining '+available_amount+' shares!');
+         }
         else {
             // we have no shares left
             toastr.error('No Shares!');

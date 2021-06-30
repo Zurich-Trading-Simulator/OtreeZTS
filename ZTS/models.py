@@ -45,25 +45,44 @@ class Subsession(BaseSubsession):
                 participant.vars['round_to_pay'] = random.randint(first_round, self.session.config['num_rounds'])
                 
 class Group(BaseGroup):
+    pass
 
-    def live_trading_report(self, id_in_group, payload):
+class Player(BasePlayer):
+    cash = models.FloatField(initial=1000000)
+    shares = models.FloatField(initial=0)
+    share_value = models.FloatField(initial=0)
+    portfolio_value = models.FloatField(initial=0)
+    pandl = models.FloatField(initial=0)
+
+    def role(self):
+        return 'trader'
+    def get_cash(self):
+        return '{:,}'.format(int(self.cash))
+    def get_shares(self):
+        return '{:,}'.format(int(self.shares))
+    def get_share_value(self):
+        return '{:,}'.format(int(self.share_value))
+    def get_portfolio_value(self):
+        return '{:,}'.format(int(self.portfolio_value))
+    def get_pandl(self):
+        return '{:,}'.format(int(self.pandl))
+
+    def live_trading_report(self, payload):
         """
         Accepts the "daily" trading Reports from the front end and
         further processes them.
         :param id_in_group: id of player in group
         :param payload: trading report
         """
+        #print('received a report from', self.id_in_group, ':', payload)
+        self.cash = payload['cash']
+        self.shares = payload['owned_shares']
+        self.share_value = payload['share_value']
+        self.portfolio_value = payload['portfolio_value']
+        self.pandl = payload['pandl']
+        self.save()
 
-        #print('received a report from', id_in_group, ':', payload)
-        p = self.get_player_by_id(id_in_group)
-        p.cash = payload['cash']
-        p.shares = payload['owned_shares']
-        p.share_value = payload['share_value']
-        p.portfolio_value = payload['portfolio_value']
-        p.pandl = payload['pandl']
-        p.save()
-
-        tradingaction = p.tradingaction_set.create()
+        tradingaction = self.tradingaction_set.create()
         tradingaction.action = payload['action']
         tradingaction.quantity = payload['quantity']
         tradingaction.price_per_share = payload['price_per_share']
@@ -78,27 +97,7 @@ class Group(BaseGroup):
 
         # Set payoff if end of round
         if(payload['action'] == 'End'):
-            p.set_payoff()
-
-class Player(BasePlayer):
-    cash = models.FloatField(initial=1000000)
-    shares = models.FloatField(initial=0)
-    share_value = models.FloatField(initial=0)
-    portfolio_value = models.FloatField(initial=0)
-    pandl = models.FloatField(initial=1000000)
-
-    def role(self):
-        return 'trader'
-    def get_cash(self):
-        return '{:,}'.format(int(self.cash))
-    def get_shares(self):
-        return '{:,}'.format(int(self.shares))
-    def get_share_value(self):
-        return '{:,}'.format(int(self.share_value))
-    def get_portfolio_value(self):
-        return '{:,}'.format(int(self.portfolio_value))
-    def get_pandl(self):
-        return '{:,}'.format(int(self.pandl))
+            self.set_payoff()
 
     def set_payoff(self):
         """
@@ -149,11 +148,11 @@ def custom_export(players):
     :return:
     """
     # header row
-    yield ['participant', 'action', 'quantity', 'price_per_share', 'cash', 'owned_shares', 'share_value', 'portfolio_value', 'cur_day',
-           'asset', 'roi', 'session']
+    yield ['session', 'round_nr', 'participant', 'action', 'quantity', 'price_per_share', 'cash', 'owned_shares', 'share_value', 'portfolio_value', 'cur_day',
+           'asset', 'roi']
     # data content
     for p in players:
         for ta in p.tradingaction_set.all():
-            yield [p.participant.code, ta.action, ta.quantity, ta.price_per_share, ta.cash, ta.owned_shares, ta.share_value,
-                   ta.portfolio_value, ta.cur_day, ta.asset, ta.roi, p.session.code]
+            yield [p.session.code, p.subsession.round_number, p.participant.code, ta.action, ta.quantity, ta.price_per_share, ta.cash, ta.owned_shares, ta.share_value,
+                   ta.portfolio_value, ta.cur_day, ta.asset, ta.roi]
 
