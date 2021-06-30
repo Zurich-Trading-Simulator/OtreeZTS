@@ -85,5 +85,10 @@ LOGGING = {
             'level': 'WARNING',
             'propagate': True,
         },
+        'daphne': {
+            'handlers': ['file'],
+            'level': 'WARNING',
+            'propagate': True,
+        },
     },
 }
