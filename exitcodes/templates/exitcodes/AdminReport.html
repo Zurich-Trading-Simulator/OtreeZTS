@@ -1,0 +1,75 @@
+{% block title %}
+	AccessCode: ExitCode Pairs
+{% endblock %}
+
+{% block content %}
+    <p>
+	Please click on the codes and Ctrl+C or RightClick -> Copy to Clipboard. <br>
+	If it is not autoselected use Ctrl+A to select all of the text, after clicking inside the textbox.
+
+		
+		<pre id="mturk_codes_json" class = "selectable light">
+		{{AccessExit}}
+		</pre>
+
+        <!--
+			<pre style="visibility: hidden">
+			<textarea class="selectable" id="mturk_codes_json2" rows="3" style="min-width:1; cursor:text; background-color: transparent; border: 0; box-shadow: none;" 
+			\ onclick="this.focus();this.select()" readonly></textarea>
+			</pre> 
+		-->
+
+{% endblock %}
+
+{% block styles %}
+<style>
+	.selectable{
+		-webkit-touch-callout: all; /* iOS Safari */
+		-webkit-user-select: all; /* Safari */
+		-khtml-user-select: all; /* Konqueror HTML */
+		-moz-user-select: all; /* Firefox */
+		-ms-user-select: all; /* Internet Explorer/Edge */
+		user-select: all; /* Chrome and Opera */
+
+		background-color: rgb(245, 245, 245);
+
+		border-style: solid;
+		border-width: 1px;
+		border-radius: 4px;
+		border-color: rgb(204, 204, 204);
+
+		min-width: 100%; 
+		
+		cursor: text; 
+	}
+
+</style>
+{% endblock %}
+
+{% block scripts %}
+
+	<script>
+		window.onload = function() {
+		var AccessExit = {{AccessExit}};
+		CodesString = JSON.stringify(AccessExit, null, "  ");
+		console.log(CodesString)
+		// CodesString = CodesString.replace(/[&\/\\#,+()$~%.'"\[\]*?<>{}]/g, '');
+
+		var textarea = $("#mturk_codes_json2");
+		var pre = $("#mturk_codes_json");
+		textarea.val(CodesString);
+		pre.text(CodesString)
+		// $("textarea").height( $("textarea")[0].scrollHeight );
+		};
+	</script>
+
+	<!-- <script>
+		var inp = $("#mturk_codes_json2")[0]; // select the input with proper selector
+		var default_value = inp.value;
+		inp.addEventListener("input", function () { 
+			this.value = default_value;
+		}, false);
+	</script> -->
+	
+{% endblock %}
+

@@ -24,7 +24,7 @@ SESSION_CONFIGS = [
     dict(
         name='ZTS',
         num_demo_participants=1,
-        app_sequence=['ZTS']
+        app_sequence=['ZTS','exitcodes']
     ),
 ]
 
