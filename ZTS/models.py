@@ -107,13 +107,14 @@ class Player(BasePlayer):
         from participants.payoff if we are not in round_to_pay. Also payoff should not 
         count if we are in a training round.
         """
-        self.payoff = self.portfolio_value
+        self.payoff = 0
+        '''self.payoff = self.portfolio_value
         random_payoff = self.session.config['random_round_payoff']
         training_round = self.session.config['training_round']
         if(random_payoff and self.round_number != self.participant.vars['round_to_pay']):
             self.participant.payoff -= self.payoff
         elif(training_round and self.round_number == 1):
-            self.participant.payoff -= self.payoff
+            self.participant.payoff -= self.payoff'''
 
 class TradingAction(Model):
     ACTIONS = [

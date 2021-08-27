@@ -7,13 +7,15 @@
 
 {% block content %}
 
-    <b>Todo</b>
-    <p>Add specific Experiment instructions here, this will only be shown before round 1!</p>
+    <!--b>Todo</b>
+    <p>Add specific Experiment instructions here, this will only be shown before round 1!</p-->
       
-    <b>Sample Instructions</b>
+    <b>Instructions</b>
     <p>
         The upcoming trading task will be conducted using a browser-based trading interface (see the image below for an illustration). 
-        The task consists of three rounds: one practice, and two main rounds. Your combined performance in the two main rounds determines your compensation. 
+        The task consists of two rounds: one practice and one main round. Once you finished both rounds you will receive a fixed compensation that is independent
+        of your performance. 
+        <!--Your combined performance in the two main rounds determines your compensation. -->
         <br>
         <br>
         At the beginning of each round you will be endowed with an initial portfolio consisting of shares of a risky asset (Shares) and a safe asset (Cash), 
@@ -30,7 +32,9 @@
         current market price. These changes only reflect the current price, and are not informative for future price changes.
     </p>
 
-    <p><i>To change this page's content adjust the html of the /ZTS/InstructionPage.html file.</i></p>
+    <img src="{% static "images/interface.png" %}" alt="Trading Interface" width=100%> 
+
+    <!--p><i>To change this page's content adjust the html of the /ZTS/InstructionPage.html file.</i></p-->
 
     {% next_button %}
 
