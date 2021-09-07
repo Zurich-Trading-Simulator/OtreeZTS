@@ -9,14 +9,14 @@ SESSION_CONFIG_DEFAULTS = dict(
     session_name="test_session",
     survey_link="https://www.qualtrics.com",
     timeseries_file="demo",
-    num_rounds=3,
-    refresh_rate=1000,
+    num_rounds=2,
+    refresh_rate=500,
     initial_cash=10000,
     random_round_payoff=True,
     training_round=True,
     graph_buffer=0.05,
-    real_world_currency_per_point=0.001,
-    participation_fee=0.00,
+    real_world_currency_per_point=1,
+    participation_fee=1.00,
     doc="",
 )
 

@@ -42,6 +42,11 @@ class Subsession(BaseSubsession):
                 first_round = 1
                 if(self.session.config['training_round']):
                     first_round = 2
+
+                # Make some checks if the session parameters are valid    
+                if first_round > self.session.config['num_rounds']:
+                    raise ValueError('Num rounds cannot be smaller than 1 (or 2 if there is a training session)!')
+
                 participant.vars['round_to_pay'] = random.randint(first_round, self.session.config['num_rounds'])
                 
 class Group(BaseGroup):
