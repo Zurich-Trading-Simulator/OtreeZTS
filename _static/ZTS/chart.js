@@ -29,7 +29,7 @@ function init_chart() {
         },
         min: 0,
         max: length-1,
-        allowDecimals: true,
+        allowDecimals: false,
     },
     plotOptions: {
         series: {

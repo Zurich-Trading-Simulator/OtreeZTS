@@ -24,25 +24,55 @@
 
             <!-- Portfolio table -->
             <div class="container">
-            <h2>My Portfolio</h2>
+            <h4>My Portfolio</h4>
+            <div class="container row" style="padding-bottom: 1em;">
+                <h5>
+                    <b>Cash: </b><span id="cash_header"></span>
+                </h5>
+
+                <h5 style="padding-left: 5em;">
+                    <b>Total: </b><span id="total_header"></span>
+                </h5>
+            </div>
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th>Cash</th>
+                    <th>Name</th>
                     <th>Shares</th>
                     <th>Share Value</th>
-                    <th>Total</th>
-                    <th>P&L</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td id="table_cash"></td>
-                    <td id="table_shares"></td>
-                    <td id="table_share_value"></td>
-                    <td id="table_total"></td>
-                    <td id="table_pandl"></td>
-                </tr>
+            <tr>
+                <td id="table_pshare_name_0">Share 1</td>
+                <td id="table_pshares_0"></td>
+                <td id="table_pshare_value_0"></td>
+            </tr>
+            <tr>
+                <td id="table_pshare_name_1">Share 2</td>
+                <td id="table_pshares_1"></td>
+                <td id="table_pshare_value_1"></td>
+            </tr>
+            <tr>
+                <td id="table_pshare_name_2">Share 3</td>
+                <td id="table_pshares_2"></td>
+                <td id="table_pshare_value_2"></td>
+            </tr>
+            <tr>
+                <td id="table_pshare_name_3">Share 4</td>
+                <td id="table_pshares_3"></td>
+                <td id="table_pshare_value_3"></td>
+            </tr>
+            <tr>
+                <td id="table_pshare_name_4">Share 5</td>
+                <td id="table_pshares_4"></td>
+                <td id="table_pshare_value_4"></td>
+            </tr>
+            <tr>
+                <td id="table_pshare_name_5">Share 6</td>
+                <td id="table_pshares_5"></td>
+                <td id="table_pshare_value_5"></td>
+            </tr>
             </tbody>
             </table>
             </div>
@@ -103,69 +133,69 @@
                     </thead>
                     <tbody>
                     <tr>
-                        <td id="table_share_name_1">Share 1</td>
+                        <td id="table_share_name_0">Share 1</td>
+                        <td id="table_share_price_0"></td>
+                        <td id="table_share_value_0">
+                            <input type="number" class="form-control" id="trade_input_0" maxlength="5" value="0">
+                        </td>
+                        <td id="table_share_action_0">
+                            <button onclick="buy_shares(this.value)" value="0" id="trade_btn_buy_0" type="button" class="btn btn-outline-primary btn-block">Buy</button>
+                            <button onclick="sell_shares(this.value)" value="0" id="trade_btn_sell_0" type="button" class="btn btn-outline-danger btn-block">Sell</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="table_share_name_1">Share 2</td>
                         <td id="table_share_price_1"></td>
                         <td id="table_share_value_1">
-                            <input type="number" class="form-control" id="trude_input_1" maxlength="5">
+                            <input type="number" class="form-control" id="trade_input_1" maxlength="5" value="0">
                         </td>
                         <td id="table_share_action_1">
-                            <button onclick="buy_shares(this.value)" value="50" id="trade_btn_buy_1" type="button" class="btn btn-outline-primary btn-block">Buy</button>
+                            <button onclick="buy_shares(this.value)" value="1" id="trade_btn_buy_1" type="button" class="btn btn-outline-primary btn-block">Buy</button>
                             <button onclick="sell_shares(this.value)" value="1" id="trade_btn_sell_1" type="button" class="btn btn-outline-danger btn-block">Sell</button>
                         </td>
                     </tr>
                     <tr>
-                        <td id="table_share_name_2">Share 2</td>
+                        <td id="table_share_name_2">Share 3</td>
                         <td id="table_share_price_2"></td>
                         <td id="table_share_value_2">
-                            <input type="number" class="form-control" id="trude_input_2" maxlength="5">
+                            <input type="number" class="form-control" id="trade_input_2" maxlength="5" value="0">
                         </td>
                         <td id="table_share_action_2">
-                            <button onclick="buy_shares(this.value)" value="50" id="trade_btn_buy_2" type="button" class="btn btn-outline-primary btn-block">Buy</button>
-                            <button onclick="sell_shares(this.value)" value="1" id="trade_btn_sell_2" type="button" class="btn btn-outline-danger btn-block">Sell</button>
+                            <button onclick="buy_shares(this.value)" value="2" id="trade_btn_buy_2" type="button" class="btn btn-outline-primary btn-block">Buy</button>
+                            <button onclick="sell_shares(this.value)" value="2" id="trade_btn_sell_2" type="button" class="btn btn-outline-danger btn-block">Sell</button>
                         </td>
                     </tr>
                     <tr>
-                        <td id="table_share_name_3">Share 3</td>
+                        <td id="table_share_name_3">Share 4</td>
                         <td id="table_share_price_3"></td>
                         <td id="table_share_value_3">
-                            <input type="number" class="form-control" id="trude_input_3" maxlength="5">
+                            <input type="number" class="form-control" id="trade_input_3" maxlength="5" value="0">
                         </td>
                         <td id="table_share_action_3">
-                            <button onclick="buy_shares(this.value)" value="50" id="trade_btn_buy_3" type="button" class="btn btn-outline-primary btn-block">Buy</button>
-                            <button onclick="sell_shares(this.value)" value="1" id="trade_btn_sell_3" type="button" class="btn btn-outline-danger btn-block">Sell</button>
+                            <button onclick="buy_shares(this.value)" value="3" id="trade_btn_buy_3" type="button" class="btn btn-outline-primary btn-block">Buy</button>
+                            <button onclick="sell_shares(this.value)" value="3" id="trade_btn_sell_3" type="button" class="btn btn-outline-danger btn-block">Sell</button>
                         </td>
                     </tr>
                     <tr>
-                        <td id="table_share_name_4">Share 4</td>
+                        <td id="table_share_name_4">Share 5</td>
                         <td id="table_share_price_4"></td>
                         <td id="table_share_value_4">
-                            <input type="number" class="form-control" id="trude_input_4" maxlength="5">
+                            <input type="number" class="form-control" id="trade_input_4" maxlength="5" value="0">
                         </td>
                         <td id="table_share_action_4">
-                            <button onclick="buy_shares(this.value)" value="50" id="trade_btn_buy_4" type="button" class="btn btn-outline-primary btn-block">Buy</button>
-                            <button onclick="sell_shares(this.value)" value="1" id="trade_btn_sell_4" type="button" class="btn btn-outline-danger btn-block">Sell</button>
+                            <button onclick="buy_shares(this.value)" value="4" id="trade_btn_buy_4" type="button" class="btn btn-outline-primary btn-block">Buy</button>
+                            <button onclick="sell_shares(this.value)" value="4" id="trade_btn_sell_4" type="button" class="btn btn-outline-danger btn-block">Sell</button>
                         </td>
                     </tr>
                     <tr>
-                        <td id="table_share_name_5">Share 5</td>
+                        <td id="table_share_name_5">Share 6</td>
                         <td id="table_share_price_5"></td>
                         <td id="table_share_value_5">
-                            <input type="number" class="form-control" id="trude_input_5" maxlength="5">
+                            <input type="number" class="form-control" id="trade_input_5" maxlength="5" value="0">
                         </td>
                         <td id="table_share_action_5">
-                            <button onclick="buy_shares(this.value)" value="50" id="trade_btn_buy_5" type="button" class="btn btn-outline-primary btn-block">Buy</button>
-                            <button onclick="sell_shares(this.value)" value="1" id="trade_btn_sell_5" type="button" class="btn btn-outline-danger btn-block">Sell</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td id="table_share_name_6">Share 6</td>
-                        <td id="table_share_price_6"></td>
-                        <td id="table_share_value_6">
-                            <input type="number" class="form-control" id="trude_input_6" maxlength="5">
-                        </td>
-                        <td id="table_share_action_6">
-                            <button onclick="buy_shares(this.value)" value="50" id="trade_btn_buy_6" type="button" class="btn btn-outline-primary btn-block">Buy</button>
-                            <button onclick="sell_shares(this.value)" value="1" id="trade_btn_sell_6" type="button" class="btn btn-outline-danger btn-block">Sell</button>
+                            <button onclick="buy_shares(this.value)" value="5" id="trade_btn_buy_5" type="button" class="btn btn-outline-primary btn-block">Buy</button>
+                            <button onclick="sell_shares(this.value)" value="5" id="trade_btn_sell_5" type="button" class="btn btn-outline-danger btn-block">Sell</button>
                         </td>
                     </tr>
                     </tbody>
