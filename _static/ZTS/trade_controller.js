@@ -10,6 +10,13 @@ var graph_buffer = js_vars.graph_buffer;
 
 // portfolio variables
 var data = js_vars.data;                            // data from timeseries file
+var share1 = js_vars.share1;
+var share2 = js_vars.share2;
+var share3 = js_vars.share3;
+var share4 = js_vars.share4;
+var share5 = js_vars.share5;
+var share6 = js_vars.share6;
+
 var cur_day = 0;                                    // current market day starts at 0
 var length = js_vars.length;                        // length of data
 var news = js_vars.news;                            // list of news that should be displayed
@@ -25,6 +32,8 @@ var pandl = 0.0;                                    // Profit & Loss
 var y_axis_offset = Math.min(1, 0.25 * data[0]);   // current length of y axis from center
 var trading_happened = false;
 var finished = false;
+var pause = false;
+var pause_button_label="Pause"
 
 /*------------------------------------------------------------------
 Function that simulates a day in the market:
@@ -35,8 +44,8 @@ Function that simulates a day in the market:
 
 // setup and first iteration
 var chart = init_chart();
-chart.yAxis[0].setExtremes(data[0] - y_axis_offset, data[0] + y_axis_offset);
-buy_half_shares();
+//chart.yAxis[0].setExtremes(data[0] - y_axis_offset, data[0] + y_axis_offset);
+//buy_half_shares();
 set_buy_sell_amounts();
 liveSend(get_trade_report('Start', data[0], 0));
 
@@ -66,19 +75,40 @@ var interval_func = setInterval(function () {
     //----------- start of current interval ----------
 
     else {
-        ++cur_day;
-        y = data[cur_day];
+        if (pause != true) {
+            ++cur_day;
+            y = data[cur_day];
+            y1 = share1[cur_day];
+            y2 = share2[cur_day];
+            y3 = share3[cur_day];
+            y4 = share4[cur_day];
+            y5 = share5[cur_day];
+            y6 = share6[cur_day];
 
-        // update chart
-        update_y_axis(y);
-        chart.series[0].addPoint([cur_day, y], true, false);
+            // update chart
+            update_y_axis(y);
+            chart.series[0].addPoint([cur_day, y1], true, false);
+            chart.series[1].addPoint([cur_day, y2], true, false);
+            chart.series[2].addPoint([cur_day, y3], true, false);
+            chart.series[3].addPoint([cur_day, y4], true, false);
+            chart.series[4].addPoint([cur_day, y5], true, false);
+            chart.series[5].addPoint([cur_day, y6], true, false);
 
-        // update views
-        $_('table_cash').innerHTML = to_comma_seperated(cash);
-        $_('table_shares').innerHTML = to_comma_seperated(shares);
-        update_portfolio();
-        $_('trade_price').innerHTML = data[cur_day].toFixed(2);
-        $_('trade_news').innerHTML = news[cur_day];
+            // update views
+            $_('table_cash').innerHTML = to_comma_seperated(cash);
+            $_('table_shares').innerHTML = to_comma_seperated(shares);
+            update_portfolio();
+//            $_('trade_price').innerHTML = data[cur_day].toFixed(2);
+//            $_('trade_news').innerHTML = news[cur_day];
+
+            $_('table_share_price_1').innerHTML = share1[cur_day].toFixed(2);
+            $_('table_share_price_2').innerHTML = share2[cur_day].toFixed(2);
+            $_('table_share_price_3').innerHTML = share3[cur_day].toFixed(2);
+            $_('table_share_price_4').innerHTML = share4[cur_day].toFixed(2);
+            $_('table_share_price_5').innerHTML = share5[cur_day].toFixed(2);
+            $_('table_share_price_6').innerHTML = share6[cur_day].toFixed(2);
+
+        }
     }
 
 }, refresh_rate);
@@ -108,16 +138,26 @@ function set_buy_sell_amounts() {
     var min = Math.min.apply(Math, data);
     var max_shares = (Math.ceil((cash/min) / 10) * 10);
     var button_m = Math.max(10, Math.ceil((max_shares/10) / 10) * 10);  // roughly 10 percent of current shares
-    $_('trade_btn_sell_m').innerHTML = "Sell " + button_m;
-    $_('trade_btn_sell_m').value = button_m;
-    $_('trade_btn_buy_m').innerHTML = "Buy " + button_m;
-    $_('trade_btn_buy_m').value = button_m;
+//    $_('trade_btn_sell_m').innerHTML = "Sell " + button_m;
+//    $_('trade_btn_sell_m').value = button_m;
+//    $_('trade_btn_buy_m').innerHTML = "Buy " + button_m;
+//    $_('trade_btn_buy_m').value = button_m;
 
     var button_l = Math.max(20, Math.ceil((max_shares/5) / 10) * 10)  // roughly 20 percent of current shares
-    $_('trade_btn_sell_l').innerHTML = "Sell " + button_l;
-    $_('trade_btn_sell_l').value = button_l;
-    $_('trade_btn_buy_l').innerHTML = "Buy " + button_l;
-    $_('trade_btn_buy_l').value = button_l;
+//    $_('trade_btn_sell_l').innerHTML = "Sell " + button_l;
+//    $_('trade_btn_sell_l').value = button_l;
+//    $_('trade_btn_buy_l').innerHTML = "Buy " + button_l;
+//    $_('trade_btn_buy_l').value = button_l;
+}
+
+function pause_sim() {
+    pause = !pause;
+    var buttonCaption = "⏸ Pause"
+    if (pause) {
+        buttonCaption = "▶ Play"
+    }
+
+    $_("pause_btn").innerHTML = buttonCaption
 }
 
 function buy_shares(amount) {
@@ -212,13 +252,13 @@ Chart Logic:
     - update y axis min and max in chart if necessary
 ------------------------------------------------------------------*/
 function update_y_axis(y) {
-    var new_y_offset = Math.abs(y - data[0]) * (1 + graph_buffer);
-    if(new_y_offset > y_axis_offset) {
-        y_axis_offset = new_y_offset;
-        var y_axis_min = data[0] - y_axis_offset;
-        var y_axis_max = data[0] + y_axis_offset;
-        chart.yAxis[0].setExtremes(y_axis_min, y_axis_max);
-    }
+//    var new_y_offset = Math.abs(y - data[0]) * (1 + graph_buffer);
+//    if(new_y_offset > y_axis_offset) {
+//        y_axis_offset = new_y_offset;
+//        var y_axis_min = data[0] - y_axis_offset;
+//        var y_axis_max = data[0] + y_axis_offset;
+//        chart.yAxis[0].setExtremes(y_axis_min, y_axis_max);
+//    }
 }
 
 /*------------------------------------------------------------------
