@@ -74,8 +74,8 @@ var interval_func = setInterval(function () {
         chart.series[0].addPoint([cur_day, y], true, false);
 
         // update views
-        $_('table_cash').innerHTML = to_comma_seperated(cash);
-        $_('table_shares').innerHTML = to_comma_seperated(shares);
+        $_('table_cash').innerHTML = to_comma_separated(cash);
+        $_('table_shares').innerHTML = to_comma_separated(shares);
         update_portfolio();
         $_('trade_price').innerHTML = data[cur_day].toFixed(2);
         $_('trade_news').innerHTML = news[cur_day];
@@ -129,8 +129,8 @@ function buy_shares(amount) {
             // We have enough cash to buy amount of shares
             cash -= cur_total;
             shares += amount;
-            $_('table_cash').innerHTML = to_comma_seperated(cash);
-            $_('table_shares').innerHTML = to_comma_seperated(shares);
+            $_('table_cash').innerHTML = to_comma_separated(cash);
+            $_('table_shares').innerHTML = to_comma_separated(shares);
             update_portfolio();
             trading_happened = true;
 
@@ -143,8 +143,8 @@ function buy_shares(amount) {
             var available_amount = Math.floor(cash / cur_price);
             cash = 0;
             shares += available_amount;
-            $_('table_cash').innerHTML = to_comma_seperated(cash);
-            $_('table_shares').innerHTML = to_comma_seperated(shares);
+            $_('table_cash').innerHTML = to_comma_separated(cash);
+            $_('table_shares').innerHTML = to_comma_separated(shares);
             // send report to server
             liveSend(get_trade_report('Buy', cur_price, available_amount));
             toastr.success('Bought '+available_amount+' shares!');
@@ -166,11 +166,10 @@ function sell_shares(amount) {
             // we have enough shares to sell amount
             cash += cur_total;
             shares -= amount;
-            $_('table_cash').innerHTML = to_comma_seperated(cash);
-            $_('table_shares').innerHTML = to_comma_seperated(shares);
+            $_('table_cash').innerHTML = to_comma_separated(cash);
+            $_('table_shares').innerHTML = to_comma_separated(shares);
             update_portfolio();
             trading_happened = true;
-
             // send report to server
             liveSend(get_trade_report('Sell', cur_price, -amount));
             toastr.success('Success!');
@@ -180,8 +179,8 @@ function sell_shares(amount) {
             var available_amount = cur_shares;
             shares = 0;
             cash += available_amount * cur_price;
-            $_('table_cash').innerHTML = to_comma_seperated(cash);
-            $_('table_shares').innerHTML = to_comma_seperated(shares);
+            $_('table_cash').innerHTML = to_comma_separated(cash);
+            $_('table_shares').innerHTML = to_comma_separated(shares);
             // send report to server
             liveSend(get_trade_report('Sell', cur_price, -available_amount));
             toastr.success('Sold remaining '+available_amount+' shares!');
@@ -202,9 +201,9 @@ function update_portfolio() {
     total = cash + share_value;
     pandl = total - start_cash;
     roi_percent = ((total/start_cash)*100) - 100;
-    $_('table_share_value').innerHTML = to_comma_seperated(share_value);
-    $_('table_total').innerHTML = to_comma_seperated(total);
-    $_('table_pandl').innerHTML = to_comma_seperated(pandl);
+    $_('table_share_value').innerHTML = to_comma_separated(share_value);
+    $_('table_total').innerHTML = to_comma_separated(total);
+    $_('table_pandl').innerHTML = to_comma_separated(pandl);
 }
 
 /*------------------------------------------------------------------
@@ -230,6 +229,7 @@ function get_trade_report(action, cur_price, amount) {
     var report_data = {
         "action": action,
         "quantity": amount,
+        "time": get_datetime(),
         "price_per_share": cur_price,
         "cash": cash,
         "owned_shares": shares,
@@ -243,14 +243,14 @@ function get_trade_report(action, cur_price, amount) {
     return report_data;
 }
 
-function get_time() {
+function get_datetime() {
     var today = new Date();
     var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
     var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     return date+' '+time;
 }
 
-function to_comma_seperated(amount) {
+function to_comma_separated(amount) {
     x = parseInt(amount)
     x = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return x;

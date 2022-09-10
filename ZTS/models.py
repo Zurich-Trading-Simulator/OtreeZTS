@@ -1,7 +1,7 @@
 import random
 import datetime
-from otree.db.models import Model, ForeignKey
-from django.db import models as models_django
+from otree.api import *
+c = cu
 from otree.api import (
     models,
     widgets,
@@ -21,20 +21,20 @@ A web-based behaviour experiment in the form of a trading game,
 designed by the Chair of Cognitive Science - ETH Zurich.
 """
 
-
 class Constants(BaseConstants):
     name_in_url = 'zts'
     players_per_group = None
-    num_rounds = 99
+    num_rounds = 99 # Actual num_rounds is specified in session config!
 
 
 class Subsession(BaseSubsession):
 
     def creating_session(self):
         """
-        This function gets called before each creation of a ZTS 
-        subsession. We use it to set a random payoff round for 
-        each player.
+        This function gets called before each creation of a ZTS subsession. We use it to set a random 
+        payoff round for each player. If random_round_payoff is set the payoff is generate only by looking
+        at one random round. If we have a training_round, then the random_payoff_round will not be the training
+        round.
         """
         if self.round_number == 1:
             for player in self.get_players():
@@ -75,7 +75,7 @@ class Player(BasePlayer):
     def live_trading_report(self, payload):
         """
         Accepts the "daily" trading Reports from the front end and
-        further processes them.
+        further processes them to store them in the database
         :param id_in_group: id of player in group
         :param payload: trading report
         """
@@ -85,22 +85,24 @@ class Player(BasePlayer):
         self.share_value = payload['share_value']
         self.portfolio_value = payload['portfolio_value']
         self.pandl = payload['pandl']
-        self.save()
 
-        tradingaction = self.tradingaction_set.create()
-        tradingaction.action = payload['action']
-        tradingaction.quantity = payload['quantity']
-        tradingaction.price_per_share = payload['price_per_share']
-        tradingaction.cash = payload['cash']
-        tradingaction.owned_shares = payload['owned_shares']
-        tradingaction.share_value = payload['share_value']
-        tradingaction.portfolio_value = payload['portfolio_value']
-        tradingaction.cur_day = payload['cur_day']
-        tradingaction.asset = payload['asset']
-        tradingaction.roi = payload['roi_percent']
-        tradingaction.save()
+        TradingAction.create(
+            action=payload['action'],
+            quantity = payload['quantity'],
+            time = payload['time'],
+            price_per_share = payload['price_per_share'],
+            cash = payload['cash'],
+            owned_shares = payload['owned_shares'],
+            share_value = payload['share_value'],
+            portfolio_value = payload['portfolio_value'],
+            cur_day = payload['cur_day'],
+            asset = payload['asset'],
+            roi = payload['roi_percent']
+        )
 
         # Set payoff if end of round
+        # TODO: move this function somewhere else for robustness/stability
+        # What if this message is lost?
         if(payload['action'] == 'End'):
             self.set_payoff()
 
@@ -113,15 +115,19 @@ class Player(BasePlayer):
         count if we are in a training round.
         """
         self.payoff = 0
-        '''self.payoff = self.portfolio_value
+        self.payoff = self.portfolio_value
         random_payoff = self.session.config['random_round_payoff']
         training_round = self.session.config['training_round']
         if(random_payoff and self.round_number != self.participant.vars['round_to_pay']):
             self.participant.payoff -= self.payoff
         elif(training_round and self.round_number == 1):
-            self.participant.payoff -= self.payoff'''
+            self.participant.payoff -= self.payoff
 
-class TradingAction(Model):
+class TradingAction(ExtraModel):
+    """
+    An extra database model that is used to store all the transactions. Each transaction is
+    linked to the player that executed it. 
+    """
     ACTIONS = [
         ('Buy', 'Buy'),
         ('Sell', 'Sell'),
@@ -131,11 +137,11 @@ class TradingAction(Model):
     ]
 
     # creates 1:m relation -> this action was made by a certain player
-    player = ForeignKey(Player, on_delete=models.CASCADE)
+    player = models.Link(Player)
 
     action = models.CharField(choices=ACTIONS, max_length=10)
     quantity = models.FloatField(initial=0.0)
-    time = models_django.DateTimeField(auto_now_add=True)
+    time = models.StringField()
     price_per_share = models.FloatField()
     cash = models.FloatField()
     owned_shares = models.FloatField()
@@ -149,16 +155,21 @@ class TradingAction(Model):
 def custom_export(players):
     """
     Create a custom export, that allows us to download more 
-    detailed trading reports as csv or excel files
-    :param players:
-    :return:
+    detailed trading reports as csv or excel files. 
+
+    NOTE: the custom export will output all Trading actions that are found in the database,
+    i.e. also of earlier sessions --> if you do not want this you migth need to implement a filter
+    here.
+
+    :param players: queryset of all players in the database
+    :yield: a titel row and then the corresponding values one after the other
     """
     # header row
     yield ['session', 'round_nr', 'participant', 'action', 'quantity', 'price_per_share', 'cash', 'owned_shares', 'share_value', 'portfolio_value', 'cur_day',
            'asset', 'roi']
     # data content
     for p in players:
-        for ta in p.tradingaction_set.all():
+        for ta in TradingAction.filter(player=p):
             yield [p.session.code, p.subsession.round_number, p.participant.code, ta.action, ta.quantity, ta.price_per_share, ta.cash, ta.owned_shares, ta.share_value,
                    ta.portfolio_value, ta.cur_day, ta.asset, ta.roi]
 
