@@ -1,2 +1,2 @@
-otree<5
+otree
 pandas
