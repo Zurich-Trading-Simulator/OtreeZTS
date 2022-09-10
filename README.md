@@ -31,7 +31,6 @@ See deployment for notes on how to deploy the project on a live system.
 ## Built With
 
 * [oTree](http://www.otree.org) - A web framework for behavioural multiplayer experiments.
-* [Django](https://www.djangoproject.com/) - The Django webframework.
 
 
 
