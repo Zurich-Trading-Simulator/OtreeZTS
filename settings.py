@@ -75,7 +75,7 @@ LOGGING = {
         'file': {
             'level': 'WARNING',
             'class': 'logging.FileHandler',
-            'filename': './logs/django_debug.log',
+            'filename': './logs/debug.log',
             'formatter': 'detailed',
         },
     },
