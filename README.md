@@ -18,7 +18,7 @@ For a more detailed documentation read [here](./documentation.pdf).
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
-Make sure to use `python 3.6` if possible to avoid any problems with Otree.
+Make sure to use `python 3.7` if possible to avoid any problems with Otree.
 See deployment for notes on how to deploy the project on a live system. 
 
 1. clone the repository to your local machine
