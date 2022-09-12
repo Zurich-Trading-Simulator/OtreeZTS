@@ -136,7 +136,7 @@ function buy_shares(amount) {
 
             // send report to server
             liveSend(get_trade_report('Buy', cur_price, amount));
-            toastr.success('Success!');
+            toastr.remove(); toastr.success('Success!');
         }
         else if(cash > 0) {
             // We don't have enough cash, but buy as much as possible
@@ -147,11 +147,11 @@ function buy_shares(amount) {
             $_('table_shares').innerHTML = to_comma_separated(shares);
             // send report to server
             liveSend(get_trade_report('Buy', cur_price, available_amount));
-            toastr.success('Bought '+available_amount+' shares!');
+            toastr.remove(); toastr.success('Bought '+available_amount+' shares!');
         }
         else {
             // We have no cash
-            toastr.error('No money!');
+            toastr.remove(); toastr.error('No money!');
         }
     }
 }
@@ -172,7 +172,7 @@ function sell_shares(amount) {
             trading_happened = true;
             // send report to server
             liveSend(get_trade_report('Sell', cur_price, -amount));
-            toastr.success('Success!');
+            toastr.remove(); toastr.success('Success!');
         }
          else if(cur_shares > 0) {
             // we don't have enough, but sell rest
@@ -183,11 +183,11 @@ function sell_shares(amount) {
             $_('table_shares').innerHTML = to_comma_separated(shares);
             // send report to server
             liveSend(get_trade_report('Sell', cur_price, -available_amount));
-            toastr.success('Sold remaining '+available_amount+' shares!');
+            toastr.remove(); toastr.success('Sold remaining '+available_amount+' shares!',);
          }
         else {
             // we have no shares left
-            toastr.error('No Shares!');
+            toastr.remove(); toastr.error('No Shares!');
         }
     }
 }
