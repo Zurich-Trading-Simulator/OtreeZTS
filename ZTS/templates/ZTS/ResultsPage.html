@@ -2,7 +2,7 @@
 {% load otree static %}
 
 {% block title %}
-    Results of Round {{subsession.round_number}}/{{session.config.num_rounds}}
+    Results of Round {{subsession.round_number}}/{{session.num_rounds}}
 {% endblock %}
 
 {% block content %}
@@ -22,11 +22,11 @@
         </thead>
         <tbody>
         <tr>
-            <td>{{player.get_cash}}</td>
-            <td>{{player.get_shares}}</td>
-            <td>{{player.get_share_value}}</td>
-            <td>{{player.get_portfolio_value}}</td>
-            <td>{{player.get_pandl}}</td>
+            <td>{{cash}}</td>
+            <td>{{shares}}</td>
+            <td>{{share_value}}</td>
+            <td>{{portfolio_value}}</td>
+            <td>{{pandl}}</td>
         </tr>
         </tbody>
     </table>

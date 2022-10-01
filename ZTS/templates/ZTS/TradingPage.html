@@ -110,8 +110,14 @@
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<!-- Make sure a warning apears when someone tries to refresh or leave the session-->
+<body onkeydown="return (event.keyCode != 116)"></body>
+<body onkeydown="return (event.keyCode != 8)"></body>
+<body onkeydown="return (event.keyCode != 123)"></body>
+<body onkeydown="return (event.keyCode != 154)"></body>
 
 <!-- Load custom javascripts from static files -->
 <script src="{% static "ZTS/chart.js" %}"></script>

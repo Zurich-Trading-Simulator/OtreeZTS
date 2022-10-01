@@ -6,18 +6,20 @@ from os import environ
 # e.g. self.session.config['participation_fee']
 
 SESSION_CONFIG_DEFAULTS = dict(
-    session_name="test_session",
-    survey_link="https://www.qualtrics.com",
-    timeseries_file="demo",
-    num_rounds=2,
-    refresh_rate=500,
-    initial_cash=10000,
+    session_name='test_session',
+    survey_link='https://www.qualtrics.com',
+    timeseries_filepath='_static/ZTS/timeseries_files/',
+    timeseries_filename='["demo_1.csv", "demo_2.csv"]',
+    refresh_rate_ms='[500, 500]',
+    initial_cash='[5000, 5000]',
+    initial_shares='[17, 17]',
+    trading_button_values='[[1, 10, 20], [1, 10, 20]]',
     random_round_payoff=True,
     training_round=True,
     graph_buffer=0.05,
     real_world_currency_per_point=1,
     participation_fee=1.00,
-    doc="",
+    doc='',
 )
 
 SESSION_CONFIGS = [
@@ -27,6 +29,9 @@ SESSION_CONFIGS = [
         app_sequence=['ZTS', 'Survey']
     ),
 ]
+
+SESSION_FIELDS = ['num_rounds']
+PARTICIPANT_FIELDS = []
 
 # ISO-639 code
 # for example: de, fr, ja, ko, zh-hans

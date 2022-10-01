@@ -7,10 +7,16 @@
 
 {% block content %}
 
-    <p>Click on "Next" to continue with round {{subsession.round_number}}/{{session.config.num_rounds}} of the experiment, whenever you are ready!</p>
+    <p>Click on "Next" to continue with round {{subsession.round_number}}/{{session.num_rounds}} of the experiment, whenever you are ready!</p>
 
     {% if is_training_round  %} <p style="color:salmon;"><b>This is a training round! After clicking 'Next' please read the instructions in the news section.<!--, the score will not count towards your final score!--></b></p> {% endif %}
 
     {% next_button %}
 
+{% endblock %}
+
+{% block scripts %}
+<!-- Write scripts in here! -->
+<!-- Load custom javascripts from static files -->
+<script src="{% static "ZTS/start_controller.js" %}"></script>
 {% endblock %}

@@ -2,17 +2,12 @@
 // Chart 
 // (from highcharts.com)
 //--------------------------------------------------------------------------------
-function init_chart() {
+function init_chart(cur_series) {
     var chart = Highcharts.chart('container', {
 	chart: {
         type: 'line',
         animation: false, // don't animate in old IE
         marginRight: 10,
-        events: {
-            load: function () {
-                series = [];
-            }
-        }
     },
     title: {
         text: 'Share Prices by Day'
@@ -55,12 +50,23 @@ function init_chart() {
         enabled: false,
     },
     series: [{
-        //name: 'Random data',
-        data: [],
+        //data: [],
+        data: (function () {
+            // add data from cur_seris to inital data.
+            var data = [];
+            for (i = 0; i < cur_series.length; i += 1) {
+               data.push({
+                  x: i,
+                  y: cur_series[i]
+               });
+            }
+            return data;
+        }()),  
         label: {
     		enabled: false,
 		}
     }],
     });
-return chart;
+
+    return chart;
 }

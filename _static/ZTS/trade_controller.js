@@ -1,30 +1,33 @@
 //--------------------------------------------------------------------------------
-// Main Script
+// Trade Controller Script
 //--------------------------------------------------------------------------------
 function $_(x) {return document.getElementById(x);} // standard $ is already used by jQuery
 $('.otree-btn-next').hide();
 
-// settings variables
-var refresh_rate = js_vars.refresh_rate;
-var graph_buffer = js_vars.graph_buffer;
+// static settings variables
+const refresh_rate = js_vars.refresh_rate;              // duration of a day in ms
+const graph_buffer = js_vars.graph_buffer;              // buffer margin at top and bottom of chart [0, 1]
+const prices = JSON.parse('[' + js_vars.prices + ']');  // prices from timeseries file
+const length = prices.length;                           // length of prices
+const news = js_vars.news;                              // list of news that should be displayed
+const start_cash = parseFloat(js_vars.cash);            // amount of initial cash
+const start_shares = parseInt(js_vars.shares);          // amount of initial shares
+const restore = localStorage.cur_day ? true : false;    // check if page was refreshed and we continue where we left off
 
-// portfolio variables
-var data = js_vars.data;                            // data from timeseries file
-var cur_day = 0;                                    // current market day starts at 0
-var length = js_vars.length;                        // length of data
-var news = js_vars.news;                            // list of news that should be displayed
-var start_cash = parseFloat(js_vars.cash);          // amount of initial cash
-var cash = start_cash;                              // amount of cash
-var shares = 0                                      // amount of initial shares a player holds
-var share_value = 0;                                // value of shares at current day
-var total = cash;                                   // current cash + value of share in possession
-var roi_percent = 0.0;                              // Return of Investment in percents
-var pandl = 0.0;                                    // Profit & Loss
-
-// chart variables
-var y_axis_offset = Math.min(1, 0.25 * data[0]);   // current length of y axis from center
-var trading_happened = false;
-var finished = false;
+// dynamic portfolio variables 
+// NOTE: store relevant vars in localStorage, so they are not lost if page is refreshed, or session restarted
+if (!restore) {
+    localStorage.cur_day = 0;                                   // current day initialized to zero
+    localStorage.cash = start_cash;                             // amount of cash
+    localStorage.shares = start_shares;                         // amount of initial shares a player holds
+    localStorage.y_axis_offset = Math.min(1, 0.25 * prices[0]); // initial length of y axis from center
+}
+var y = prices[parseInt(localStorage.cur_day)]              // current share price
+var share_value = 0.0                                       // value of shares at current day
+var total = parseFloat(localStorage.cash);                  // current cash + value of share in possession
+var roi_percent = 0.0;                                      // return of Investment in percents
+var pandl = 0.0;                                            // profit & Loss
+var trading_happened = false;                               // determines if in current day a trade was made yet
 
 /*------------------------------------------------------------------
 Function that simulates a day in the market:
@@ -34,11 +37,12 @@ Function that simulates a day in the market:
 ------------------------------------------------------------------*/
 
 // setup and first iteration
-var chart = init_chart();
-chart.yAxis[0].setExtremes(data[0] - y_axis_offset, data[0] + y_axis_offset);
-buy_half_shares();
 set_buy_sell_amounts();
-liveSend(get_trade_report('Start', data[0], 0));
+var chart = init_chart(prices.slice(0, parseInt(localStorage.cur_day) + 1));
+update_y_axis(y);
+if (!restore) {
+    liveSend(get_trade_report('Start', prices[0], 0));
+}
 
 // wait until first interval is over before continuing
 setTimeout(function () {
@@ -52,85 +56,67 @@ var interval_func = setInterval(function () {
     //----------- clean up of last interval ----------
 
     // send 'HOLD' report of previous interval
-    if(!trading_happened) liveSend(get_trade_report('Hold', data[cur_day], 0));
+    if(!trading_happened) liveSend(get_trade_report('Hold', y, 0));
     trading_happened = false;
 
     // end interval and send 'END' report if no days left
-    if(cur_day >= length-1) {
+    if(parseInt(localStorage.cur_day) >= length - 1) {
         clearInterval(interval_func);
-        finished = true;
         liveSend(get_trade_report('End', y, 0));
+        alert('Current round has finished, you can continue by clicking ok and then next.');
+        disable_buttons();
+        localStorage.clear();
         $('.otree-btn-next').show();
-    }
 
     //----------- start of current interval ----------
 
-    else {
-        ++cur_day;
-        y = data[cur_day];
+    } else {
+        localStorage.cur_day = parseInt(localStorage.cur_day) + 1;
+        y = prices[parseInt(localStorage.cur_day)];
 
         // update chart
         update_y_axis(y);
-        chart.series[0].addPoint([cur_day, y], true, false);
+        chart.series[0].addPoint([parseInt(localStorage.cur_day), y], true, false);
 
         // update views
-        $_('table_cash').innerHTML = to_comma_separated(cash);
-        $_('table_shares').innerHTML = to_comma_separated(shares);
         update_portfolio();
-        $_('trade_price').innerHTML = data[cur_day].toFixed(2);
-        $_('trade_news').innerHTML = news[cur_day];
+        $_('trade_price').innerHTML = prices[parseInt(localStorage.cur_day)].toFixed(2);
+        $_('trade_news').innerHTML = news[parseInt(localStorage.cur_day)];
     }
 
 }, refresh_rate);
 
 /*------------------------------------------------------------------
 Trading Logic:
-    - function to buy shares with half of cash (for initialization)
     - function for setting reasonable sell/buy amounts on button
     - on-click-listeners on all buttons in trade
     - functions for buying and selling shares
 --------------------------------------------------------------------*/
-function buy_half_shares() {
-    // Makes a fair split of cash and shares with start money for initialization
-    var half_cash = cash / 2.0;
-    var half_shares = Math.round(half_cash / data[0]);
-    cash -= half_shares * data[0];
-    shares = half_shares;
-    liveSend(get_trade_report('Buy', data[0], half_shares));
-    update_portfolio();
-
-}
-
 function set_buy_sell_amounts() {
-    // Values for Buttons are very important b.c. they influence greatly how
-    // many shares somebody buys, we tried to make reasonable Values here
-    // for most situations. Also we tried to make somewhat nice values (/10*10)
-    var min = Math.min.apply(Math, data);
-    var max_shares = (Math.ceil((cash/min) / 10) * 10);
-    var button_m = Math.max(10, Math.ceil((max_shares/10) / 10) * 10);  // roughly 10 percent of current shares
-    $_('trade_btn_sell_m').innerHTML = "Sell " + button_m;
-    $_('trade_btn_sell_m').value = button_m;
-    $_('trade_btn_buy_m').innerHTML = "Buy " + button_m;
-    $_('trade_btn_buy_m').value = button_m;
-
-    var button_l = Math.max(20, Math.ceil((max_shares/5) / 10) * 10)  // roughly 20 percent of current shares
-    $_('trade_btn_sell_l').innerHTML = "Sell " + button_l;
-    $_('trade_btn_sell_l').value = button_l;
-    $_('trade_btn_buy_l').innerHTML = "Buy " + button_l;
-    $_('trade_btn_buy_l').value = button_l;
+    values = js_vars.trading_button_values;
+    $_('trade_btn_sell_s').innerHTML = "Sell " + values[0];
+    $_('trade_btn_sell_s').value = values[0];
+    $_('trade_btn_buy_s').innerHTML = "Sell " + values[0];
+    $_('trade_btn_buy_s').value = values[0];
+    $_('trade_btn_sell_m').innerHTML = "Sell " + values[0];
+    $_('trade_btn_sell_m').value = values[1];
+    $_('trade_btn_buy_m').innerHTML = "Buy " + values[1];
+    $_('trade_btn_buy_m').value = values[1];
+    $_('trade_btn_sell_l').innerHTML = "Sell " + values[2];
+    $_('trade_btn_sell_l').value = values[2];
+    $_('trade_btn_buy_l').innerHTML = "Buy " + values[2];
+    $_('trade_btn_buy_l').value = values[2];
 }
 
 function buy_shares(amount) {
-    amount = parseFloat(amount);
-    if(cur_day > 0 && !finished) {
-        var cur_price = data[cur_day];
+    amount = parseInt(amount);
+    if(parseInt(localStorage.cur_day)) {
+        var cur_price = prices[parseInt(localStorage.cur_day)];
         var cur_total = amount * cur_price;
-        if(cur_total <= cash) {
+        if(cur_total <= parseFloat(localStorage.cash)) {
             // We have enough cash to buy amount of shares
-            cash -= cur_total;
-            shares += amount;
-            $_('table_cash').innerHTML = to_comma_separated(cash);
-            $_('table_shares').innerHTML = to_comma_separated(shares);
+            localStorage.cash = parseFloat(localStorage.cash) - cur_total;
+            localStorage.shares = parseInt(localStorage.shares) + amount;
             update_portfolio();
             trading_happened = true;
 
@@ -138,13 +124,13 @@ function buy_shares(amount) {
             liveSend(get_trade_report('Buy', cur_price, amount));
             toastr.remove(); toastr.success('Success!');
         }
-        else if(cash > 0) {
+        else if(parseFloat(localStorage.cash) > 0) {
             // We don't have enough cash, but buy as much as possible
-            var available_amount = Math.floor(cash / cur_price);
-            cash = 0;
-            shares += available_amount;
-            $_('table_cash').innerHTML = to_comma_separated(cash);
-            $_('table_shares').innerHTML = to_comma_separated(shares);
+            var available_amount = Math.floor(parseFloat(localStorage.cash) / cur_price);
+            localStorage.cash = 0;
+            localStorage.shares = parseInt(localStorage.shares) + available_amount;
+            update_portfolio();
+            trading_happened = true;
             // send report to server
             liveSend(get_trade_report('Buy', cur_price, available_amount));
             toastr.remove(); toastr.success('Bought '+available_amount+' shares!');
@@ -157,17 +143,15 @@ function buy_shares(amount) {
 }
 
 function sell_shares(amount) {
-    amount = parseFloat(amount);
-    if(cur_day > 0 && !finished) {
-        var cur_price = data[cur_day];
-        var cur_shares = shares;
+    amount = parseInt(amount);
+    if(parseInt(localStorage.cur_day) > 0) {
+        var cur_price = prices[parseInt(localStorage.cur_day)];
+        var cur_shares = parseInt(localStorage.shares);
         var cur_total = amount * cur_price;
         if(amount <= cur_shares) {
             // we have enough shares to sell amount
-            cash += cur_total;
-            shares -= amount;
-            $_('table_cash').innerHTML = to_comma_separated(cash);
-            $_('table_shares').innerHTML = to_comma_separated(shares);
+            localStorage.cash = parseFloat(localStorage.cash) + cur_total;
+            localStorage.shares = parseInt(localStorage.shares) - amount;
             update_portfolio();
             trading_happened = true;
             // send report to server
@@ -177,10 +161,10 @@ function sell_shares(amount) {
          else if(cur_shares > 0) {
             // we don't have enough, but sell rest
             var available_amount = cur_shares;
-            shares = 0;
-            cash += available_amount * cur_price;
-            $_('table_cash').innerHTML = to_comma_separated(cash);
-            $_('table_shares').innerHTML = to_comma_separated(shares);
+            localStorage.shares = 0;
+            localStorage.cash = parseFloat(localStorage.cash) + available_amount * cur_price;
+            update_portfolio();
+            trading_happened = true;
             // send report to server
             liveSend(get_trade_report('Sell', cur_price, -available_amount));
             toastr.remove(); toastr.success('Sold remaining '+available_amount+' shares!',);
@@ -197,10 +181,12 @@ Portfolio Logic:
     - update portfolio
 ------------------------------------------------------------------*/
 function update_portfolio() {
-    share_value = shares * data[cur_day];
-    total = cash + share_value;
+    share_value = parseInt(localStorage.shares) * prices[parseInt(localStorage.cur_day)];
+    total = parseFloat(localStorage.cash) + share_value;
     pandl = total - start_cash;
     roi_percent = ((total/start_cash)*100) - 100;
+    $_('table_cash').innerHTML = to_comma_separated(parseFloat(localStorage.cash));
+    $_('table_shares').innerHTML = to_comma_separated(parseInt(localStorage.shares));
     $_('table_share_value').innerHTML = to_comma_separated(share_value);
     $_('table_total').innerHTML = to_comma_separated(total);
     $_('table_pandl').innerHTML = to_comma_separated(pandl);
@@ -211,11 +197,12 @@ Chart Logic:
     - update y axis min and max in chart if necessary
 ------------------------------------------------------------------*/
 function update_y_axis(y) {
-    var new_y_offset = Math.abs(y - data[0]) * (1 + graph_buffer);
+    var y_axis_offset = parseFloat(localStorage.y_axis_offset)
+    var new_y_offset = Math.abs(y - prices[0]) * (1 + graph_buffer);
     if(new_y_offset > y_axis_offset) {
-        y_axis_offset = new_y_offset;
-        var y_axis_min = data[0] - y_axis_offset;
-        var y_axis_max = data[0] + y_axis_offset;
+        localStorage.y_axis_offset = new_y_offset;
+        var y_axis_min = prices[0] - new_y_offset;
+        var y_axis_max = prices[0] + new_y_offset;
         chart.yAxis[0].setExtremes(y_axis_min, y_axis_max);
     }
 }
@@ -223,7 +210,9 @@ function update_y_axis(y) {
 /*------------------------------------------------------------------
 Helper Functions:
     - get a dictionary with all the info for a trade
+    - disable the buttons once trading period is over
     - get current date & time
+    - to comma seperated adds a comma for thousands for readability
 ------------------------------------------------------------------*/
 function get_trade_report(action, cur_price, amount) {
     var report_data = {
@@ -231,16 +220,25 @@ function get_trade_report(action, cur_price, amount) {
         "quantity": amount,
         "time": get_datetime(),
         "price_per_share": cur_price,
-        "cash": cash,
-        "owned_shares": shares,
+        "cash": parseFloat(localStorage.cash),
+        "owned_shares": parseInt(localStorage.shares),
         "share_value": share_value,
         "portfolio_value": total,
-        "cur_day": cur_day,
-        "asset": "SMI",
+        "cur_day": parseInt(localStorage.cur_day),
+        "asset": "N/A",
         "roi_percent": roi_percent,
         "pandl": pandl
     };
     return report_data;
+}
+
+function disable_buttons() {
+    $_('trade_btn_sell_s').disabled = true;
+    $_('trade_btn_sell_m').disabled = true;
+    $_('trade_btn_sell_l').disabled = true;
+    $_('trade_btn_buy_s').disabled = true;
+    $_('trade_btn_buy_m').disabled = true;
+    $_('trade_btn_buy_l').disabled = true;
 }
 
 function get_datetime() {
@@ -255,4 +253,3 @@ function to_comma_separated(amount) {
     x = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return x;
 }
-

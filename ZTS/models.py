@@ -1,5 +1,5 @@
+import json
 import random
-import datetime
 from otree.api import *
 c = cu
 from otree.api import (
@@ -24,8 +24,7 @@ designed by the Chair of Cognitive Science - ETH Zurich.
 class Constants(BaseConstants):
     name_in_url = 'zts'
     players_per_group = None
-    num_rounds = 99 # Actual num_rounds is specified in session config!
-
+    num_rounds = 20 # Actual num_rounds is specified in session config, by the length of the list 'timeseries_filename'!
 
 class Subsession(BaseSubsession):
 
@@ -36,18 +35,52 @@ class Subsession(BaseSubsession):
         at one random round. If we have a training_round, then the random_payoff_round will not be the training
         round.
         """
+        # The following initial session setup only needs to be called once and not for each subsession
         if self.round_number == 1:
+
+            self.session.num_rounds = len(json.loads(self.session.config['timeseries_filename']))
+
             for player in self.get_players():
-                participant = player.participant
                 first_round = 1
                 if(self.session.config['training_round']):
                     first_round = 2
 
                 # Make some checks if the session parameters are valid    
-                if first_round > self.session.config['num_rounds']:
+                if first_round > self.session.num_rounds:
                     raise ValueError('Num rounds cannot be smaller than 1 (or 2 if there is a training session)!')
 
-                participant.vars['round_to_pay'] = random.randint(first_round, self.session.config['num_rounds'])
+                player.participant.vars['round_to_pay'] = random.randint(first_round, self.session.num_rounds)
+
+    def get_config_multivalue(self, value_name):
+        """
+        Some config values can contain either a list of values (for each round) or a single value
+        with this function we can provide a unified way of accessing it independently of what is 
+        the actual value format.
+
+        :param value_name: the name of the config variable
+        :return: the parsed value for the current round
+        """
+        parsed_value = json.loads(self.session.config[value_name])
+        if isinstance(parsed_value, list):
+            assert(len(parsed_value) >= self.session.num_rounds), value_name + ' contains less entries than effective rounds!'
+            return parsed_value[self.round_number - 1]
+        else:
+            return parsed_value
+
+    def get_timeseries_values(self):
+        """
+        Read this rounds timeseries file and parse the lists of values
+
+        :return : the list of prices and list of news
+        """
+        path = self.session.config['timeseries_filepath'] + self.get_config_multivalue('timeseries_filename')
+        rows = read_csv(path, TimeSeriesFile)
+        cols = {k: [dic[k] for dic in rows] for k in ['price', 'news']}
+        if 'news' in cols.keys():
+            news =  [x if x else '' for x in cols['news']]
+        else:
+            news = '' * len(cols['price'])
+        return cols['price'], news
                 
 class Group(BaseGroup):
     pass
@@ -57,36 +90,23 @@ class Player(BasePlayer):
     shares = models.FloatField(initial=0)
     share_value = models.FloatField(initial=0)
     portfolio_value = models.FloatField(initial=0)
-    pandl = models.FloatField(initial=0)
-
-    def role(self):
-        return 'trader'
-    def get_cash(self):
-        return '{:,}'.format(int(self.cash))
-    def get_shares(self):
-        return '{:,}'.format(int(self.shares))
-    def get_share_value(self):
-        return '{:,}'.format(int(self.share_value))
-    def get_portfolio_value(self):
-        return '{:,}'.format(int(self.portfolio_value))
-    def get_pandl(self):
-        return '{:,}'.format(int(self.pandl))
+    pandl = models.FloatField(initial=0)    
 
     def live_trading_report(self, payload):
         """
         Accepts the "daily" trading Reports from the front end and
         further processes them to store them in the database
-        :param id_in_group: id of player in group
         :param payload: trading report
         """
         #print('received a report from', self.id_in_group, ':', payload)
-        self.cash = payload['cash']
-        self.shares = payload['owned_shares']
-        self.share_value = payload['share_value']
-        self.portfolio_value = payload['portfolio_value']
-        self.pandl = payload['pandl']
+        self.cash = float(payload['cash'])
+        self.shares = int(payload['owned_shares'])
+        self.share_value = float(payload['share_value'])
+        self.portfolio_value = float(payload['portfolio_value'])
+        self.pandl = float(payload['pandl'])
 
         TradingAction.create(
+            player=self,
             action=payload['action'],
             quantity = payload['quantity'],
             time = payload['time'],
@@ -101,8 +121,6 @@ class Player(BasePlayer):
         )
 
         # Set payoff if end of round
-        # TODO: move this function somewhere else for robustness/stability
-        # What if this message is lost?
         if(payload['action'] == 'End'):
             self.set_payoff()
 
@@ -110,7 +128,7 @@ class Player(BasePlayer):
         """
         Set the players payoff for the current round to the total portfolio value.
         If we want participants final payoff to be chosen randomly
-        from all rounds instead of accumulated (oTree standard) subtract current payoff
+        from all rounds instead of accumulatee standard) subtract current payoff
         from participants.payoff if we are not in round_to_pay. Also payoff should not 
         count if we are in a training round.
         """
@@ -136,9 +154,7 @@ class TradingAction(ExtraModel):
         ('Hold', 'Hold'),
     ]
 
-    # creates 1:m relation -> this action was made by a certain player
     player = models.Link(Player)
-
     action = models.CharField(choices=ACTIONS, max_length=10)
     quantity = models.FloatField(initial=0.0)
     time = models.StringField()
@@ -148,9 +164,13 @@ class TradingAction(ExtraModel):
     share_value = models.FloatField()
     portfolio_value = models.FloatField()
     cur_day = models.IntegerField()
-    trade = models.CharField(blank=True, max_length=100)
     asset = models.CharField(blank=True, max_length=100)
     roi = models.FloatField()
+
+class TimeSeriesFile(ExtraModel):
+    date = models.StringField()
+    price = models.FloatField()
+    news = models.StringField()
 
 def custom_export(players):
     """
@@ -172,4 +192,4 @@ def custom_export(players):
         for ta in TradingAction.filter(player=p):
             yield [p.session.code, p.subsession.round_number, p.participant.code, ta.action, ta.quantity, ta.price_per_share, ta.cash, ta.owned_shares, ta.share_value,
                    ta.portfolio_value, ta.cur_day, ta.asset, ta.roi]
-
+    

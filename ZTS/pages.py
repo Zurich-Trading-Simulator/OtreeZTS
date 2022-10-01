@@ -1,7 +1,6 @@
 from otree.api import Currency as c, currency_range
 from ._builtin import Page, WaitPage
 from .models import Constants
-import pandas as pd
 import locale
 
 class InstructionPage(Page):
@@ -10,7 +9,7 @@ class InstructionPage(Page):
 
 class StartPage(Page):
     def is_displayed(self):
-        return self.round_number <= self.session.config['num_rounds']
+        return self.round_number <= self.session.num_rounds
     
     def vars_for_template(self):
         is_training_round = self.session.config['training_round'] and self.round_number == 1
@@ -22,31 +21,37 @@ class TradingPage(Page):
     live_method = 'live_trading_report'
 
     def is_displayed(self):
-        return self.round_number <= self.session.config['num_rounds']
+        return self.round_number <= self.session.num_rounds
 
     def js_vars(self):
         """
         Pass data for trading controller to javascript front-end
         """
-        timeseries_df = pd.read_csv('_static/ZTS/timeseries_files/{}_{}.csv'.format(
-            self.session.config['timeseries_file'], self.round_number))
-        timeseries_points = timeseries_df['AdjustedClose'].to_list()
-        timeseries_length = len(timeseries_points)
-
-        timeseries_news = [""] * timeseries_length
-        if 'News' in timeseries_df:
-            timeseries_news = timeseries_df['News'].fillna("").to_list()
+        prices, news = self.subsession.get_timeseries_values()
         return dict(
-            refresh_rate=self.session.config['refresh_rate'],
+            refresh_rate=self.subsession.get_config_multivalue('refresh_rate_ms'),
             graph_buffer=self.session.config['graph_buffer'],
-            data=timeseries_df['AdjustedClose'].to_list(),
-            length=timeseries_length,
-            news=timeseries_news,
-            cash=self.session.config['initial_cash'],
+            prices=prices,
+            news=news,
+            cash=self.subsession.get_config_multivalue('initial_cash'),
+            shares=self.subsession.get_config_multivalue('initial_shares'),
+            trading_button_values=self.subsession.get_config_multivalue('trading_button_values')
         )
 
 class ResultsPage(Page):
     def is_displayed(self):
-        return self.round_number <= self.session.config['num_rounds']
+        return self.round_number <= self.session.num_rounds
+
+    def to_human_readable(self, x):
+        return '{:,}'.format(int(x))
+
+    def vars_for_template(self):
+        return dict(
+            cash = self.to_human_readable(self.player.cash),
+            shares = self.to_human_readable(self.player.shares),
+            share_value = self.to_human_readable(self.player.share_value),
+            portfolio_value = self.to_human_readable(self.player.portfolio_value),
+            pandl = self.to_human_readable(self.player.pandl)
+        )
 
 page_sequence = [InstructionPage, StartPage, TradingPage, ResultsPage]
