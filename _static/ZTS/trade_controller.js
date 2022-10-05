@@ -10,6 +10,7 @@ const graph_buffer = js_vars.graph_buffer;              // buffer margin at top 
 const prices = JSON.parse('[' + js_vars.prices + ']');  // prices from timeseries file
 const length = prices.length;                           // length of prices
 const news = js_vars.news;                              // list of news that should be displayed
+const asset = js_vars.asset;                            // name of the asset (name of the timeseries file)
 const start_cash = parseFloat(js_vars.cash);            // amount of initial cash
 const start_shares = parseInt(js_vars.shares);          // amount of initial shares
 const restore = localStorage.cur_day ? true : false;    // check if page was refreshed and we continue where we left off
@@ -225,7 +226,7 @@ function get_trade_report(action, cur_price, amount) {
         "share_value": share_value,
         "portfolio_value": total,
         "cur_day": parseInt(localStorage.cur_day),
-        "asset": "N/A",
+        "asset": asset,
         "roi_percent": roi_percent,
         "pandl": pandl
     };

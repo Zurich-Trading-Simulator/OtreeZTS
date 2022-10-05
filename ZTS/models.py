@@ -73,14 +73,16 @@ class Subsession(BaseSubsession):
 
         :return : the list of prices and list of news
         """
-        path = self.session.config['timeseries_filepath'] + self.get_config_multivalue('timeseries_filename')
+        filename = self.get_config_multivalue('timeseries_filename')
+        asset = filename.strip('.csv')
+        path = self.session.config['timeseries_filepath'] + filename
         rows = read_csv(path, TimeSeriesFile)
-        cols = {k: [dic[k] for dic in rows] for k in ['price', 'news']}
-        if 'news' in cols.keys():
-            news =  [x if x else '' for x in cols['news']]
+        prices = [dic['price'] for dic in rows]
+        if 'news' in rows[0].keys():
+            news =  [dic['news'] if dic['news'] else '' for dic in rows]
         else:
-            news = '' * len(cols['price'])
-        return cols['price'], news
+            news = '' * len(prices)
+        return asset, prices, news
                 
 class Group(BaseGroup):
     pass

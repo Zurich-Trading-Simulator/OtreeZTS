@@ -27,12 +27,13 @@ class TradingPage(Page):
         """
         Pass data for trading controller to javascript front-end
         """
-        prices, news = self.subsession.get_timeseries_values()
+        asset, prices, news = self.subsession.get_timeseries_values()
         return dict(
             refresh_rate=self.subsession.get_config_multivalue('refresh_rate_ms'),
             graph_buffer=self.session.config['graph_buffer'],
             prices=prices,
             news=news,
+            asset=asset,
             cash=self.subsession.get_config_multivalue('initial_cash'),
             shares=self.subsession.get_config_multivalue('initial_shares'),
             trading_button_values=self.subsession.get_config_multivalue('trading_button_values')

@@ -62,38 +62,3 @@ in the form of a trading game, designed by the Chair of Cognitive Science - ETH 
 
 # Change this default secret key to a fully random one after forking.
 SECRET_KEY = '1sjjosef4a7#)%cb3_us8%aa*l_d476lp&*hatrb6al*u*dude^'
-
-INSTALLED_APPS = ['otree']
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    "formatters": {
-        "simple": {
-          "format": "%(asctime)s - %(message)s",
-        },
-        "detailed": {
-          "format": "%(asctime)s - %(pathname)s:%(lineno)d - %(message)s"
-        }
-    },
-    'handlers': {
-        'file': {
-            'level': 'WARNING',
-            'class': 'logging.FileHandler',
-            'filename': './logs/debug.log',
-            'formatter': 'detailed',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'WARNING',
-            'propagate': True,
-        },
-        'daphne': {
-            'handlers': ['file'],
-            'level': 'WARNING',
-            'propagate': True,
-        },
-    },
-}
