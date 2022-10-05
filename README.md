@@ -42,13 +42,6 @@ Read the Deployment section [here](#deployment) for notes on how to setup an run
 ## Deployment
 Running the application locally, is enough for testing purposes, but please be aware that in order to perform any experiments the application needs to be run in a production environment, to guarantee safety and correctness. To deploy the oTreeZTS for production follow the oTree documentation steps [here](https://otree.readthedocs.io/ja/latest/server/intro.html).
 
-## TODOS
-[] Make sure report is correct
-[] Make sur that initial buy where shares are split is not logged!!
-[] Add things to doc
-[] tests
-[] check logging Logfiles
-
 ## Built With
 
 * [oTree](https://www.otree.org) - A web framework for behavioural multiplayer experiments.
