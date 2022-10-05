@@ -11,28 +11,28 @@ To setup an own customizable experiment of the project please read deployment se
 
 1. Open the following URL in a browser: [https://zts.otree.ethz.ch/](https://zts.otree.ethz.ch/)
 2. Click on the “ZTS” button to open a demo session
-3. Click on the provided link under Single-use links and the session should start in a seperate tab.
+3. Click on the provided link under Single-use links and the session should start in a separate tab.
 
 ## Project Structure
 - The entire Project is developed in Otree.
 - Javascript and CSS Files are stored in `_static/` as suggested by [Otree Documentation](https://otree.readthedocs.io/en/latest/).
 - An Otree session (The entire ZTS experiment) contains several sub-sessions:
-    - `/ZTS`: x rounds of the trading simulator, where the number of rounds x can be set in the `ZTS/models.py`.
+    - `/ZTS`: x rounds of the trading simulator, where the number of rounds x can be set  by the amount of timeseries files (data file containing the asset prices for each market day) provided to the session config.
     - `/Post_Survey`: A link to a post survey, specified through the session settings.  
 - Timeseries Files used for the trading charts are stored in the following way: 
-    `/_static/ZTS/timeseries_files/[filename]_[round-nr].csv` make sure that if replacing them, they are in the same format.
-- Reports: Download the custom Report for a more detailed trading actions summary.
+    `/_static/ZTS/timeseries_files/[filename].csv` make sure that you set the list of filenames and the filepath in the session config.
+- Reports: In the Data tab download the custom Report for a more detailed summary on every trading action that took place.
 
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
-Make sure to use `python 3.7` if possible to avoid any problems with Otree.
+Make sure that python is installed on your machine (you can check this by running `python3 --version`).
 Read the Deployment section [here](#deployment) for notes on how to setup an run your own project on a live system. 
 
 1. clone the repository to your local machine
 2. cd to the project directory
 3. create a new python environment: `python3 -m venv env`
-4. activate your virtualenv source: `env/bin/activate`
+4. activate your virtualenv source: `source env/bin/activate`
 5. install dependencies: `pip3 install -r requirements_base.txt`
 6. run the developement server: `otree devserver`
 
