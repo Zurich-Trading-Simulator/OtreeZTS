@@ -28,7 +28,6 @@ var share_value = 0.0                                       // value of shares a
 var total = parseFloat(localStorage.cash);                  // current cash + value of share in possession
 var roi_percent = 0.0;                                      // return of Investment in percents
 var pandl = 0.0;                                            // profit & Loss
-var trading_happened = false;                               // determines if in current day a trade was made yet
 
 /*------------------------------------------------------------------
 Function that simulates a day in the market:
@@ -55,10 +54,6 @@ var interval_func = setInterval(function () {
     // beginning of current interval!
 
     //----------- clean up of last interval ----------
-
-    // send 'HOLD' report of previous interval
-    if(!trading_happened) liveSend(get_trade_report('Hold', y, 0));
-    trading_happened = false;
 
     // end interval and send 'END' report if no days left
     if(parseInt(localStorage.cur_day) >= length - 1) {
@@ -119,7 +114,6 @@ function buy_shares(amount) {
             localStorage.cash = parseFloat(localStorage.cash) - cur_total;
             localStorage.shares = parseInt(localStorage.shares) + amount;
             update_portfolio();
-            trading_happened = true;
 
             // send report to server
             liveSend(get_trade_report('Buy', cur_price, amount));
@@ -131,7 +125,6 @@ function buy_shares(amount) {
             localStorage.cash = 0;
             localStorage.shares = parseInt(localStorage.shares) + available_amount;
             update_portfolio();
-            trading_happened = true;
             // send report to server
             liveSend(get_trade_report('Buy', cur_price, available_amount));
             toastr.remove(); toastr.success('Bought '+available_amount+' shares!');
@@ -154,7 +147,6 @@ function sell_shares(amount) {
             localStorage.cash = parseFloat(localStorage.cash) + cur_total;
             localStorage.shares = parseInt(localStorage.shares) - amount;
             update_portfolio();
-            trading_happened = true;
             // send report to server
             liveSend(get_trade_report('Sell', cur_price, -amount));
             toastr.remove(); toastr.success('Success!');
@@ -165,7 +157,6 @@ function sell_shares(amount) {
             localStorage.shares = 0;
             localStorage.cash = parseFloat(localStorage.cash) + available_amount * cur_price;
             update_portfolio();
-            trading_happened = true;
             // send report to server
             liveSend(get_trade_report('Sell', cur_price, -available_amount));
             toastr.remove(); toastr.success('Sold remaining '+available_amount+' shares!',);

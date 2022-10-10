@@ -153,7 +153,6 @@ class TradingAction(ExtraModel):
         ('Sell', 'Sell'),
         ('Start', 'Start'),
         ('End', 'End'),
-        ('Hold', 'Hold'),
     ]
 
     player = models.Link(Player)
