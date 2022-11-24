@@ -92,7 +92,7 @@ function set_buy_sell_amounts() {
     values = js_vars.trading_button_values;
     $_('trade_btn_sell_s').innerHTML = "Sell " + values[0];
     $_('trade_btn_sell_s').value = values[0];
-    $_('trade_btn_buy_s').innerHTML = "Sell " + values[0];
+    $_('trade_btn_buy_s').innerHTML = "Buy " + values[0];
     $_('trade_btn_buy_s').value = values[0];
     $_('trade_btn_sell_m').innerHTML = "Sell " + values[1];
     $_('trade_btn_sell_m').value = values[1];
